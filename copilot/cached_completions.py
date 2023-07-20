@@ -7,7 +7,8 @@ from typing import Iterable
 from copilot.utils import SLOW_GPT_MODEL
 
 COPILOT_MERGEDBOT_DIR_NAME = ".copilot-mergedbot"
-PROMPTS_DIR_NAME = ".prompts"
+PROMPTS_DIR_NAME = "prompts"
+COMPLETIONS_DIR_NAME = "completions"
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,10 @@ class RepoCompletions:
             / f"{repo_file.as_posix()}.{self.completion_name}.json"
         )
         completion_str_file = (
-            self.repo / COPILOT_MERGEDBOT_DIR_NAME / f"{repo_file.as_posix()}.{self.completion_name}.txt"
+            self.repo
+            / COPILOT_MERGEDBOT_DIR_NAME
+            / COMPLETIONS_DIR_NAME
+            / f"{repo_file.as_posix()}.{self.completion_name}.txt"
         )
         try:
             previous_prompt = json.loads(prompt_json_file.read_text(encoding="utf-8"))
