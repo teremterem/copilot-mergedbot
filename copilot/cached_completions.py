@@ -61,7 +61,7 @@ class RepoCompletions:
         except FileNotFoundError:
             logger.debug("Prompt file %r not found. Generating a new completion.", prompt_json_file)
 
-        # either a completion for this file does not exist or the prompt has changed - generate a new completion
+        # either no completion for this file exists yet or the prompt has changed - generate a new completion
         gpt_response = await openai.ChatCompletion.acreate(**kwargs)
         completion_str = gpt_response.choices[0].message.content
 
