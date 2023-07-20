@@ -1,5 +1,6 @@
 # pylint: disable=no-name-in-module
 import json
+import logging
 from pathlib import Path
 from typing import Iterable
 
@@ -8,6 +9,8 @@ from promptlayer import openai
 from copilot.utils import SLOW_GPT_MODEL
 
 COPILOT_MERGEDBOT_DIR_NAME = ".copilot-mergedbot"
+
+logger = logging.getLogger(__name__)
 
 
 class RepoCompletions:
@@ -50,12 +53,15 @@ class RepoCompletions:
             self.repo / COPILOT_MERGEDBOT_DIR_NAME / f"{repo_file.as_posix()}.{self.completion_name}.txt"
         )
 
-        previous_prompt = json.loads(prompt_json_file.read_text(encoding="utf-8"))
-        if previous_prompt == kwargs:
-            # the prompt has not changed - return the cached completion
-            return completion_str_file.read_text(encoding="utf-8")
+        try:
+            previous_prompt = json.loads(prompt_json_file.read_text(encoding="utf-8"))
+            if previous_prompt == kwargs:
+                # the prompt has not changed - return the cached completion
+                return completion_str_file.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            logger.debug("Prompt file %r not found. Generating a new completion.", prompt_json_file)
 
-        # either a completion for this file does not exist or the prompt has changed
+        # either a completion for this file does not exist or the prompt has changed - generate a new completion
         gpt_response = await openai.ChatCompletion.acreate(**kwargs)
         completion_str = gpt_response.choices[0].message.content
 

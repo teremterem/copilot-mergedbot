@@ -4,7 +4,7 @@ from copilot.cached_completions import RepoCompletions
 from copilot.utils import FAST_GPT_MODEL
 
 repo_completions = RepoCompletions(
-    repo=Path(__file__).parent,
+    repo=Path(__file__).parents[1],
     completion_name="helloworld",
     model=FAST_GPT_MODEL,
 )
