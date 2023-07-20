@@ -68,6 +68,6 @@ class RepoCompletions:
 
         completion_str_file.parent.mkdir(parents=True, exist_ok=True)
         completion_str_file.write_text(completion_str, encoding="utf-8")
-        prompt_json_file.write_text(json.dumps(kwargs, indent=4), encoding="utf-8")
+        prompt_json_file.write_text(json.dumps(kwargs, ensure_ascii=False, indent=4), encoding="utf-8")
 
         return completion_str
