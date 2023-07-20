@@ -4,8 +4,6 @@ import logging
 from pathlib import Path
 from typing import Iterable
 
-from promptlayer import openai
-
 from copilot.utils import SLOW_GPT_MODEL
 
 COPILOT_MERGEDBOT_DIR_NAME = ".copilot-mergedbot"
@@ -60,6 +58,9 @@ class RepoCompletions:
                 return completion_str_file.read_text(encoding="utf-8")
         except FileNotFoundError:
             logger.debug("Prompt file %r not found. Generating a new completion.", prompt_json_file)
+
+        # pylint: disable=import-outside-toplevel
+        from promptlayer import openai
 
         # either no completion for this file exists yet or the prompt has changed - generate a new completion
         gpt_response = await openai.ChatCompletion.acreate(**kwargs)
