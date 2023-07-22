@@ -52,7 +52,7 @@ async def main() -> None:
     messages = [convert_lc_message_to_openai(m) for m in messages]
     await print_explanation(gpt3_explainer, messages, file)
     await print_explanation(gpt3_long_explainer, messages, file)
-    await print_explanation(gpt3_explainer, messages, file)
+    await print_explanation(gpt4_explainer, messages, file)
 
 
 async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[str, str]], file: Path | str) -> None:
