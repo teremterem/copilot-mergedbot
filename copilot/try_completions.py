@@ -56,7 +56,6 @@ async def main() -> None:
 
 
 async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[str, str]], file: Path | str) -> None:
-    print()
     print("====================================================================================================")
     print()
     print(await explainer.chat_completion_for_file(messages=messages, repo_file=file))
