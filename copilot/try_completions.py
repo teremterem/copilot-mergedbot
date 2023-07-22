@@ -14,7 +14,13 @@ repo_completions = RepoCompletions(
 async def main() -> None:
     # messages = [{"role": "assistant", "content": "Привіт world!"}]
     # print(await repo_completions.chat_completion_for_file(messages=messages, repo_file=Path(__file__)))
-    repo_files = list_files_in_repo(Path(__file__).parents[2] / "langchain")
+    repo_files = [
+        f
+        for f in list_files_in_repo(
+            Path(__file__).parents[2] / "langchain", additional_gitignore_content="tests/\ndocs/"
+        )
+        if f.suffix.lower() == ".py"
+    ]
 
     print()
     for file in repo_files:
