@@ -16,9 +16,7 @@ async def main() -> None:
     # print(await repo_completions.chat_completion_for_file(messages=messages, repo_file=Path(__file__)))
     repo_files = [
         f
-        for f in list_files_in_repo(
-            Path(__file__).parents[2] / "langchain", additional_gitignore_content="tests/\ndocs/"
-        )
+        for f in list_files_in_repo(Path(__file__).parents[2] / "Auto-GPT", additional_gitignore_content="tests/")
         if f.suffix.lower() == ".py"
     ]
 
