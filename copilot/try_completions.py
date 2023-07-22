@@ -1,5 +1,5 @@
 from pathlib import Path
-from pprint import pprint
+from typing import Iterable
 
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
@@ -34,9 +34,6 @@ gpt4_explainer = RepoCompletions(
 
 
 async def main() -> None:
-    # messages = [{"role": "assistant", "content": "Привіт world!"}]
-    # print(await repo_completions.chat_completion_for_file(messages=messages, repo_file=Path(__file__)))
-
     repo_files = [
         f for f in list_files_in_repo(REPO_PATH, additional_gitignore_content="tests/") if f.suffix.lower() == ".py"
     ]
@@ -48,9 +45,21 @@ async def main() -> None:
     print()
 
     file = "autogpt/core/planning/simple.py"
-    prompt_messages = EXPLAIN_FILE_PROMPT.format_messages(
+    messages = EXPLAIN_FILE_PROMPT.format_messages(
         file_path=file,
         file_content=(REPO_PATH / file).read_text(encoding="utf-8"),
     )
-    prompt_messages = [convert_lc_message_to_openai(pm) for pm in prompt_messages]
-    pprint(prompt_messages, sort_dicts=False)
+    messages = [convert_lc_message_to_openai(m) for m in messages]
+    await print_explanation(gpt3_explainer, messages, file)
+    await print_explanation(gpt3_long_explainer, messages, file)
+    await print_explanation(gpt3_explainer, messages, file)
+
+
+async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[str, str]], file: Path | str) -> None:
+    print()
+    print("====================================================================================================")
+    print()
+    print(await explainer.chat_completion_for_file(messages=messages, repo_file=file))
+    print()
+    print(explainer.model)
+    print()
