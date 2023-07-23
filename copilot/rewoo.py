@@ -1,13 +1,13 @@
 import json
 from pathlib import Path
 
-from botmerger import InMemoryBotMerger, SingleTurnContext, BotResponses
+from botmerger import SingleTurnContext, BotResponses
 from langchain import LLMChain
 from langchain.chat_models import PromptLayerChatOpenAI
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
+from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger
 from copilot.utils.repo_access_utils import list_files_in_repo
-from copilot.utils.misc import SLOW_GPT_MODEL
 
 REWOO_PLANNER_PROMPT = ChatPromptTemplate.from_messages(
     [
@@ -81,8 +81,6 @@ Here is the expected format of your response:\
 )
 
 REPO_PATH_IN_QUESTION = Path(__file__).parents[2] / "langchain"
-
-bot_merger = InMemoryBotMerger()
 
 
 def list_files_in_specific_repo() -> list[Path]:
