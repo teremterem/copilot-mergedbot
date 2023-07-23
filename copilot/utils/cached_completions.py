@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Iterable
 
-from copilot.utils import SLOW_GPT_MODEL
+from copilot.utils.misc import SLOW_GPT_MODEL
 
 COPILOT_MERGEDBOT_DIR_NAME = ".copilot-mergedbot"
 PROMPTS_DIR_NAME = "prompts"

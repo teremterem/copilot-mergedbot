@@ -6,8 +6,8 @@ from langchain import LLMChain
 from langchain.chat_models import PromptLayerChatOpenAI
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
-from copilot.repo_access_utils import list_files_in_repo
-from copilot.utils import SLOW_GPT_MODEL
+from copilot.utils.repo_access_utils import list_files_in_repo
+from copilot.utils.misc import SLOW_GPT_MODEL
 
 REWOO_PLANNER_PROMPT = ChatPromptTemplate.from_messages(
     [

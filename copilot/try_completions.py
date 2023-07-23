@@ -3,9 +3,9 @@ from typing import Iterable
 
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
-from copilot.cached_completions import RepoCompletions
-from copilot.repo_access_utils import list_files_in_repo
-from copilot.utils import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL
+from copilot.utils.cached_completions import RepoCompletions
+from copilot.utils.repo_access_utils import list_files_in_repo
+from copilot.utils.misc import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL
 
 EXPLAIN_FILE_PROMPT = ChatPromptTemplate.from_messages(
     [
