@@ -5,7 +5,7 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 
 from copilot.cached_completions import RepoCompletions
 from copilot.repo_access_utils import list_files_in_repo
-from copilot.utils import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL, convert_lc_message_to_openai
+from copilot.utils import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL
 
 EXPLAIN_FILE_PROMPT = ChatPromptTemplate.from_messages(
     [
@@ -14,7 +14,7 @@ EXPLAIN_FILE_PROMPT = ChatPromptTemplate.from_messages(
         SystemMessagePromptTemplate.from_template("Please explain the content of this file in plain English."),
     ]
 )
-REPO_PATH = Path(__file__).parents[2] / "Auto-GPT"
+REPO_PATH = Path(__file__).parents[2] / "langchain"
 
 gpt3_explainer = RepoCompletions(
     repo=REPO_PATH,
@@ -44,15 +44,15 @@ async def main() -> None:
     print(len(repo_files))
     print()
 
-    file = "autogpt/core/planning/simple.py"
-    messages = EXPLAIN_FILE_PROMPT.format_messages(
-        file_path=file,
-        file_content=(REPO_PATH / file).read_text(encoding="utf-8"),
-    )
-    messages = [convert_lc_message_to_openai(m) for m in messages]
-    await print_explanation(gpt3_explainer, messages, file)
-    await print_explanation(gpt3_long_explainer, messages, file)
-    await print_explanation(gpt4_explainer, messages, file)
+    # file = "autogpt/core/planning/simple.py"
+    # messages = EXPLAIN_FILE_PROMPT.format_messages(
+    #     file_path=file,
+    #     file_content=(REPO_PATH / file).read_text(encoding="utf-8"),
+    # )
+    # messages = [convert_lc_message_to_openai(m) for m in messages]
+    # await print_explanation(gpt3_explainer, messages, file)
+    # await print_explanation(gpt3_long_explainer, messages, file)
+    # await print_explanation(gpt4_explainer, messages, file)
 
 
 async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[str, str]], file: Path | str) -> None:
