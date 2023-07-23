@@ -5,7 +5,7 @@ from copilot.utils.misc import sort_paths
 from copilot.utils.repo_access_utils import list_files_in_repo
 
 REPO_PATH_IN_QUESTION = Path(__file__).parents[2] / "langchain"
-LIST_CHUNK_SIZE = 100
+LIST_CHUNK_SIZE = 200
 
 rnd = Random(42)
 
