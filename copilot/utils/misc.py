@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import Iterable
+
 from botmerger import InMemoryBotMerger
 from langchain.schema import BaseMessage
 
@@ -18,3 +21,7 @@ def convert_lc_message_to_openai(message: BaseMessage) -> dict[str, str]:
     else:
         raise ValueError(f"Unexpected message type: {message.type}")
     return {"role": role, "content": message.content}
+
+
+def sort_paths(paths: Iterable[Path], case_insensitive: bool = False) -> list[Path]:
+    return sorted(paths, key=lambda p: (p.as_posix().lower(), p.as_posix()) if case_insensitive else p.as_posix())

@@ -23,7 +23,6 @@ def list_files_in_repo(repo_path: str | Path, additional_gitignore_content: str 
             if not spec.match_file(rel_file_path) and _is_text_file(file_path):
                 file_list.append(rel_file_path)
 
-    file_list.sort(key=lambda p: (p.as_posix().lower(), p.as_posix()))
     return file_list
 
 
