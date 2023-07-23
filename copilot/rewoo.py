@@ -6,7 +6,7 @@ from langchain import LLMChain
 from langchain.chat_models import PromptLayerChatOpenAI
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
-from copilot.specific_repo import list_files_in_specific_repo, REPO_PATH_IN_QUESTION
+from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo_chunked
 from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger
 
 REWOO_PLANNER_PROMPT = ChatPromptTemplate.from_messages(
@@ -83,7 +83,7 @@ Here is the expected format of your response:\
 
 @bot_merger.create_bot("ReWOO")
 async def rewoo(context: SingleTurnContext) -> None:
-    file_list: list[Path] = list_files_in_specific_repo()
+    file_list: list[Path] = list_files_in_specific_repo_chunked()[0]
     file_list_str = "\n".join(f.as_posix() for f in file_list)
 
     chat_llm = PromptLayerChatOpenAI(
