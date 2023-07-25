@@ -10,8 +10,16 @@ LIST_CHUNK_SIZE = 100
 rnd = Random(42)
 
 
-def list_files_in_specific_repo() -> list[Path]:
-    return sort_paths(list_files_in_repo(REPO_PATH_IN_QUESTION))
+def list_files_in_specific_repo(reduced_list: bool = False) -> list[Path]:
+    if reduced_list:
+        result = [
+            f
+            for f in list_files_in_repo(REPO_PATH_IN_QUESTION, additional_gitignore_content="tests/")
+            if f.suffix.lower() == ".py"
+        ]
+    else:
+        result = list_files_in_repo(REPO_PATH_IN_QUESTION)
+    return sort_paths(result)
 
 
 def list_files_in_specific_repo_chunked(chunk_size: int = LIST_CHUNK_SIZE) -> list[list[Path]]:

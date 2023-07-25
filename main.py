@@ -1,9 +1,11 @@
 # pylint: disable=wrong-import-position
+import asyncio
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from copilot.discord_connector import main
+from copilot.explain_full_repo import main
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
