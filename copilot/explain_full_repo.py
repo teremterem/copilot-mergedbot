@@ -1,11 +1,12 @@
+import traceback
 from pathlib import Path
 from typing import Iterable
 
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
-from copilot.specific_repo import list_files_in_specific_repo, REPO_PATH_IN_QUESTION
+from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo_chunked
 from copilot.utils.cached_completions import RepoCompletions
-from copilot.utils.misc import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL
+from copilot.utils.misc import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL, convert_lc_message_to_openai
 
 EXPLAIN_FILE_PROMPT = ChatPromptTemplate.from_messages(
     [
@@ -33,7 +34,8 @@ gpt4_explainer = RepoCompletions(
 
 
 async def main() -> None:
-    repo_files = list_files_in_specific_repo(reduced_list=True)
+    # pylint: disable=broad-exception-caught
+    repo_files = list_files_in_specific_repo_chunked(reduced_list=True)[0]
     print()
     for file in repo_files:
         print(file)
@@ -41,15 +43,53 @@ async def main() -> None:
     print(len(repo_files))
     print()
 
-    # file = "autogpt/core/planning/simple.py"
-    # messages = EXPLAIN_FILE_PROMPT.format_messages(
-    #     file_path=file,
-    #     file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
-    # )
-    # messages = [convert_lc_message_to_openai(m) for m in messages]
-    # await print_explanation(gpt3_explainer, messages, file)
-    # await print_explanation(gpt3_long_explainer, messages, file)
-    # await print_explanation(gpt4_explainer, messages, file)
+    failed_files = []
+    for file in repo_files:
+        try:
+            messages = EXPLAIN_FILE_PROMPT.format_messages(
+                file_path=file,
+                file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
+            )
+            messages = [convert_lc_message_to_openai(m) for m in messages]
+            await print_explanation(gpt3_explainer, messages, file)
+        except Exception:
+            traceback.print_exc()
+            failed_files.append(file)
+
+    if failed_files:
+        print()
+        print("FAILED FILES:")
+        print()
+        for file in failed_files:
+            print(file)
+        print()
+        print(len(failed_files))
+        print()
+
+        files_that_failed_again = []
+        for file in repo_files:
+            try:
+                messages = EXPLAIN_FILE_PROMPT.format_messages(
+                    file_path=file,
+                    file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
+                )
+                messages = [convert_lc_message_to_openai(m) for m in messages]
+                await print_explanation(gpt3_long_explainer, messages, file)
+            except Exception:
+                traceback.print_exc()
+                files_that_failed_again.append(file)
+
+        if files_that_failed_again:
+            print()
+            print("FAILED AGAIN FILES:")
+            print()
+            for file in files_that_failed_again:
+                print(file)
+            print()
+            print(len(files_that_failed_again))
+            print()
+
+    print("DONE")
 
 
 async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[str, str]], file: Path | str) -> None:
