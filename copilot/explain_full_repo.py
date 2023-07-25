@@ -44,8 +44,9 @@ async def main() -> None:
     print()
 
     failed_files = []
-    for file in repo_files:
+    for idx, file in enumerate(repo_files):
         try:
+            print(idx, "-", file)
             messages = EXPLAIN_FILE_PROMPT.format_messages(
                 file_path=file,
                 file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
@@ -67,8 +68,9 @@ async def main() -> None:
         print()
 
         files_that_failed_again = []
-        for file in repo_files:
+        for idx, file in enumerate(failed_files):
             try:
+                print(idx, "-", file)
                 messages = EXPLAIN_FILE_PROMPT.format_messages(
                     file_path=file,
                     file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
