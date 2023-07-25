@@ -22,8 +22,10 @@ def list_files_in_specific_repo(reduced_list: bool = False) -> list[Path]:
     return sort_paths(result)
 
 
-def list_files_in_specific_repo_chunked(chunk_size: int = LIST_CHUNK_SIZE) -> list[list[Path]]:
-    files = list_files_in_specific_repo()
+def list_files_in_specific_repo_chunked(
+    chunk_size: int = LIST_CHUNK_SIZE, reduced_list: bool = False
+) -> list[list[Path]]:
+    files = list_files_in_specific_repo(reduced_list=reduced_list)
     rnd.shuffle(files)
 
     chunks = []
