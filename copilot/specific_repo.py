@@ -17,6 +17,8 @@ def list_files_in_specific_repo(reduced_list: bool = False) -> list[Path]:
             for f in list_files_in_repo(REPO_PATH_IN_QUESTION, additional_gitignore_content="tests/")
             if f.suffix.lower() == ".py"
         ]
+        # remove files that are empty or contain only whitespaces
+        result = [f for f in result if (REPO_PATH_IN_QUESTION / f).read_text(encoding="utf-8").strip()]
     else:
         result = list_files_in_repo(REPO_PATH_IN_QUESTION)
     return sort_paths(result)
