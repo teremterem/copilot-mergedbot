@@ -12,7 +12,7 @@ async def main() -> None:
     print(len(repo_files))
     print()
 
-    file = "docs/api_reference/conf.py"
+    file = "langchain/embeddings/openai.py"
     messages = EXPLAIN_FILE_PROMPT.format_messages(
         repo_name=REPO_PATH_IN_QUESTION.name,
         file_path=file,
@@ -20,6 +20,5 @@ async def main() -> None:
     )
     messages = [convert_lc_message_to_openai(m) for m in messages]
     explanation = await gpt3_explainer.chat_completion_for_file(messages=messages, repo_file=file)
-    print()
     print(explanation)
     print()
