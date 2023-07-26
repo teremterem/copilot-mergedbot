@@ -75,6 +75,7 @@ async def main() -> None:
             try:
                 print(idx, "-", file)
                 messages = EXPLAIN_FILE_PROMPT.format_messages(
+                    repo_name=REPO_PATH_IN_QUESTION.name,
                     file_path=file,
                     file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
                 )
