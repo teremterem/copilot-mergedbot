@@ -4,7 +4,7 @@ from typing import Iterable
 
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
-from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo_chunked
+from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo
 from copilot.utils.cached_completions import RepoCompletions
 from copilot.utils.misc import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL, convert_lc_message_to_openai
 
@@ -37,7 +37,8 @@ gpt4_explainer = RepoCompletions(
 
 async def main() -> None:
     # pylint: disable=broad-exception-caught
-    repo_files = list_files_in_specific_repo_chunked(reduced_list=True)[0]
+    # repo_files = list_files_in_specific_repo_chunked(reduced_list=True)[0]
+    repo_files = list_files_in_specific_repo(reduced_list=True)
     print()
     for file in repo_files:
         print(file)
@@ -48,7 +49,7 @@ async def main() -> None:
     failed_files = []
     for idx, file in enumerate(repo_files):
         try:
-            print(idx, "-", file)
+            print(idx + 1, "/", len(repo_files), "-", file)
             messages = EXPLAIN_FILE_PROMPT.format_messages(
                 repo_name=REPO_PATH_IN_QUESTION.name,
                 file_path=file,
@@ -73,7 +74,7 @@ async def main() -> None:
         files_that_failed_again = []
         for idx, file in enumerate(failed_files):
             try:
-                print(idx, "-", file)
+                print(idx + 1, "/", len(failed_files), "-", file)
                 messages = EXPLAIN_FILE_PROMPT.format_messages(
                     repo_name=REPO_PATH_IN_QUESTION.name,
                     file_path=file,
