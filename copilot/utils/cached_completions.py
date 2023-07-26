@@ -8,6 +8,7 @@ from copilot.utils.misc import SLOW_GPT_MODEL
 
 COPILOT_MERGEDBOT_DIR_NAME = ".copilot-mergedbot"
 PROMPTS_DIR_NAME = "prompts"
+RESPONSES_DIR_NAME = "responses"
 COMPLETIONS_DIR_NAME = "completions"
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,12 @@ class RepoCompletions:
             / PROMPTS_DIR_NAME
             / f"{repo_file.as_posix()}.{self.completion_name}.json"
         )
+        response_json_file = (
+            self.repo
+            / COPILOT_MERGEDBOT_DIR_NAME
+            / RESPONSES_DIR_NAME
+            / f"{repo_file.as_posix()}.{self.completion_name}.json"
+        )
         completion_str_file = (
             self.repo
             / COPILOT_MERGEDBOT_DIR_NAME
@@ -76,6 +83,10 @@ class RepoCompletions:
         completion_str_file.parent.mkdir(parents=True, exist_ok=True)
         completion_str_file.write_text(completion_str, encoding="utf-8")
         prompt_json_file.parent.mkdir(parents=True, exist_ok=True)
-        prompt_json_file.write_text(json.dumps(kwargs, ensure_ascii=False, indent=4), encoding="utf-8")
+        prompt_json_file.write_text(json.dumps(kwargs, ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8")
+        response_json_file.parent.mkdir(parents=True, exist_ok=True)
+        response_json_file.write_text(
+            json.dumps(gpt_response.to_dict(), ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8"
+        )
 
         return completion_str
