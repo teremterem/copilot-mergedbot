@@ -24,7 +24,7 @@ click==8.1.6
     #   pip-tools
 decorator==5.1.1
     # via ipython
-dill==0.3.6
+dill==0.3.7
     # via pylint
 distlib==0.3.7
     # via virtualenv
@@ -32,7 +32,7 @@ executing==1.2.0
     # via stack-data
 filelock==3.12.2
     # via virtualenv
-identify==2.5.25
+identify==2.5.26
     # via pre-commit
 ipython==8.14.0
     # via -r dev-requirements.in
@@ -102,11 +102,11 @@ traitlets==5.9.0
     # via
     #   ipython
     #   matplotlib-inline
-virtualenv==20.24.1
+virtualenv==20.24.2
     # via pre-commit
 wcwidth==0.2.6
     # via prompt-toolkit
-wheel==0.40.0
+wheel==0.41.0
     # via pip-tools
 wrapt==1.15.0
     # via astroid
