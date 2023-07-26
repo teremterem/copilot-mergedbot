@@ -10,7 +10,9 @@ from copilot.utils.misc import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MOD
 
 EXPLAIN_FILE_PROMPT = ChatPromptTemplate.from_messages(
     [
-        SystemMessagePromptTemplate.from_template("Here is the content of `{file_path}`:"),
+        SystemMessagePromptTemplate.from_template(
+            "Here is the content of `{file_path}`, a file from the `{repo_name}` repo:"
+        ),
         HumanMessagePromptTemplate.from_template("{file_content}"),
         SystemMessagePromptTemplate.from_template("Please explain the content of this file in plain English."),
     ]
@@ -52,7 +54,9 @@ async def main() -> None:
                 file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
             )
             messages = [convert_lc_message_to_openai(m) for m in messages]
-            await gpt3_explainer.chat_completion_for_file(messages=messages, repo_file=file)
+            await gpt3_explainer.chat_completion_for_file(
+                messages=messages, repo_file=file, repo_name=REPO_PATH_IN_QUESTION.name
+            )
         except Exception:
             traceback.print_exc()
             failed_files.append(file)
@@ -76,7 +80,9 @@ async def main() -> None:
                     file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
                 )
                 messages = [convert_lc_message_to_openai(m) for m in messages]
-                await gpt3_long_explainer.chat_completion_for_file(messages=messages, repo_file=file)
+                await gpt3_long_explainer.chat_completion_for_file(
+                    messages=messages, repo_file=file, repo_name=REPO_PATH_IN_QUESTION.name
+                )
             except Exception:
                 traceback.print_exc()
                 files_that_failed_again.append(file)
