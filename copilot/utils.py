@@ -1,2 +1,0 @@
-FAST_GPT_MODEL = "gpt-3.5-turbo-0613"
-SLOW_GPT_MODEL = "gpt-4-0613"
