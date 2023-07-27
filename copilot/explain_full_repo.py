@@ -56,7 +56,7 @@ async def main() -> None:
                 file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
             )
             messages = [convert_lc_message_to_openai(m) for m in messages]
-            await gpt3_explainer.chat_completion_for_file(messages=messages, repo_file=file)
+            await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file)
         except Exception:
             traceback.print_exc()
             failed_files.append(file)
@@ -81,7 +81,7 @@ async def main() -> None:
                     file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
                 )
                 messages = [convert_lc_message_to_openai(m) for m in messages]
-                await gpt3_long_explainer.chat_completion_for_file(messages=messages, repo_file=file)
+                await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
             except Exception:
                 traceback.print_exc()
                 files_that_failed_again.append(file)
@@ -102,7 +102,7 @@ async def main() -> None:
 async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[str, str]], file: Path | str) -> None:
     print("====================================================================================================")
     print()
-    print(await explainer.chat_completion_for_file(messages=messages, repo_file=file))
+    print(await explainer.file_related_chat_completion(messages=messages, repo_file=file))
     print()
     print(explainer.model)
     print()

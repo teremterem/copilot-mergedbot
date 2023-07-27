@@ -19,6 +19,6 @@ async def main() -> None:
         file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
     )
     messages = [convert_lc_message_to_openai(m) for m in messages]
-    explanation = await gpt3_long_explainer.chat_completion_for_file(messages=messages, repo_file=file)
+    explanation = await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
     print(explanation)
     print()
