@@ -148,7 +148,6 @@ class RepoCompletions:
         )
 
         if result is None:
-            # TODO do we need to hit the backup cache here as well ?
             logger.debug("Cache entries for file `%s` not found. Generating a new embedding.", repo_file.as_posix())
 
             # pylint: disable=import-outside-toplevel

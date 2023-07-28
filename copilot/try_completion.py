@@ -10,7 +10,8 @@ async def main() -> None:
     # print(len(repo_files))
     # print()
 
-    file = "libs/experimental/langchain_experimental/cpal/base.py"
+    # file = "libs/experimental/langchain_experimental/cpal/base.py"
+    file = "libs/langchain/langchain/text_splitter.py"
     explanation = await explain_repo_file_in_isolation(file)
     print()
     print(explanation)
