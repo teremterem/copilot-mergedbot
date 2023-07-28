@@ -1,4 +1,4 @@
-from copilot.explain_full_repo import EXPLAIN_FILE_PROMPT, gpt3_long_explainer
+from copilot.explain_repo import EXPLAIN_FILE_PROMPT, gpt3_long_explainer
 from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo_chunked
 from copilot.utils.misc import convert_lc_message_to_openai
 
