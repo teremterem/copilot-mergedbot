@@ -21,7 +21,6 @@ class RepoCompletions:
         self,
         repo: Path | str,
         completion_name: str,
-        backup_completion_name: str = None,  # another place to look for a cached entry
         model: str = SLOW_GPT_MODEL,
         temperature: float = 0.0,
         **kwargs,
@@ -30,7 +29,6 @@ class RepoCompletions:
             repo = Path(repo)
         self.repo = repo.resolve()
         self.completion_name = completion_name
-        self.backup_completion_name = backup_completion_name
 
         self.model = model
         self.temperature = temperature
@@ -91,17 +89,6 @@ class RepoCompletions:
             repo_file=repo_file,
             prompt=kwargs,
             completion_name=self.completion_name,
-            prompts_dir_name=PROMPTS_DIR_NAME,
-            responses_dir_name=COMPLETIONS_DIR_NAME,
-            json_response=False,
-        )
-        if result is not None:
-            return result
-
-        _, _, _, result = self._hit_the_cache(
-            repo_file=repo_file,
-            prompt=kwargs,
-            completion_name=self.backup_completion_name,
             prompts_dir_name=PROMPTS_DIR_NAME,
             responses_dir_name=COMPLETIONS_DIR_NAME,
             json_response=False,
