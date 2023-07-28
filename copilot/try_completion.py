@@ -1,6 +1,5 @@
-from copilot.explain_repo import EXPLAIN_FILE_PROMPT, gpt3_long_explainer
-from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo_chunked
-from copilot.utils.misc import convert_lc_message_to_openai
+from copilot.explain_repo import explain_repo_file_in_isolation
+from copilot.specific_repo import list_files_in_specific_repo_chunked
 
 
 async def main() -> None:
@@ -13,12 +12,6 @@ async def main() -> None:
     print()
 
     file = "libs/experimental/langchain_experimental/cpal/base.py"
-    messages = EXPLAIN_FILE_PROMPT.format_messages(
-        repo_name=REPO_PATH_IN_QUESTION.name,
-        file_path=file,
-        file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
-    )
-    messages = [convert_lc_message_to_openai(m) for m in messages]
-    explanation = await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+    explanation = await explain_repo_file_in_isolation(file)
     print(explanation)
     print()
