@@ -163,7 +163,7 @@ class RepoCompletions:
             )
             response_json_file.parent.mkdir(parents=True, exist_ok=True)
             response_json_file.write_text(
-                json.dumps(result.to_dict(), ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8"
+                json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8"
             )
 
         return result["data"][0]["embedding"]
