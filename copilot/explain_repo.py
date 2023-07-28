@@ -48,6 +48,9 @@ ada_embedder = RepoCompletions(
 
 
 async def explain_repo_file_in_isolation(file: Path | str, gpt4: bool = False) -> str:
+    if not isinstance(file, Path):
+        file = Path(file)
+
     messages = EXPLAIN_FILE_PROMPT.format_messages(
         repo_name=REPO_PATH_IN_QUESTION.name,
         file_path=file,
@@ -56,24 +59,26 @@ async def explain_repo_file_in_isolation(file: Path | str, gpt4: bool = False) -
     messages = [convert_lc_message_to_openai(m) for m in messages]
 
     if gpt4:
-        return await gpt4_explainer.file_related_chat_completion(messages=messages, repo_file=file)
-
-    explanation = await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file, cache_only=True)
-    if explanation is None:
-        # short model cache miss - try the long model cache
-        explanation = await gpt3_long_explainer.file_related_chat_completion(
+        explanation = await gpt4_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+    else:
+        explanation = await gpt3_explainer.file_related_chat_completion(
             messages=messages, repo_file=file, cache_only=True
         )
+        if explanation is None:
+            # short model cache miss - try the long model cache
+            explanation = await gpt3_long_explainer.file_related_chat_completion(
+                messages=messages, repo_file=file, cache_only=True
+            )
 
-    if explanation is None:
-        # cache miss for both models - generate a new completion
-        try:
-            explanation = await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file)
-        except Exception:  # TODO use more specific exceptions ?
-            # short model failed - try the long model
-            explanation = await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+        if explanation is None:
+            # cache miss for both models - generate a new completion
+            try:
+                explanation = await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+            except Exception:  # TODO use more specific exceptions ?
+                # short model failed - try the long model
+                explanation = await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
 
-    return explanation
+    return f"FILE: {file.as_posix()}\n\n{explanation}"
 
 
 async def explain_everything() -> None:

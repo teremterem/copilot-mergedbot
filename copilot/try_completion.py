@@ -1,5 +1,4 @@
-from copilot.explain_repo import ada_embedder
-from copilot.specific_repo import REPO_PATH_IN_QUESTION
+from copilot.explain_repo import explain_repo_file_in_isolation
 
 
 async def main() -> None:
@@ -14,14 +13,9 @@ async def main() -> None:
     # file = "libs/experimental/langchain_experimental/cpal/base.py"
     file = "libs/langchain/langchain/text_splitter.py"
 
-    # explanation = await explain_repo_file_in_isolation(file)
-    # print()
-    # print(explanation)
-    # print()
+    result = await explain_repo_file_in_isolation(file)
+    # result = await ada_embedder.file_related_embedding(result, repo_file=file)
 
-    embedding = await ada_embedder.file_related_embedding(
-        content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"), repo_file=file
-    )
     print()
-    print(embedding)
+    print(result)
     print()
