@@ -42,7 +42,7 @@ gpt4_explainer = RepoCompletions(
 )
 ada_embedder = RepoCompletions(
     repo=REPO_PATH_IN_QUESTION,
-    completion_name="ada2",
+    completion_name="ada2-expl",
     model=EMBEDDING_MODEL,
 )
 
@@ -161,9 +161,7 @@ async def embed_everything() -> None:
     for idx, file in enumerate(repo_files):
         try:
             print(idx + 1, "/", len(repo_files), "-", file)
-            await ada_embedder.file_related_embedding(
-                content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"), repo_file=file
-            )
+            await ada_embedder.file_related_embedding(await explain_repo_file_in_isolation(file), repo_file=file)
         except Exception:
             traceback.print_exc()
             failed_files.append(file)
