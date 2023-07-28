@@ -7,7 +7,13 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 
 from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo
 from copilot.utils.cached_completions import RepoCompletions
-from copilot.utils.misc import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL, convert_lc_message_to_openai
+from copilot.utils.misc import (
+    convert_lc_message_to_openai,
+    FAST_GPT_MODEL,
+    FAST_LONG_GPT_MODEL,
+    SLOW_GPT_MODEL,
+    EMBEDDING_MODEL,
+)
 
 EXPLAIN_FILE_PROMPT = ChatPromptTemplate.from_messages(
     [
@@ -33,6 +39,11 @@ gpt4_explainer = RepoCompletions(
     repo=REPO_PATH_IN_QUESTION,
     completion_name="gpt4-expl",
     model=SLOW_GPT_MODEL,
+)
+ada_embedder = RepoCompletions(
+    repo=REPO_PATH_IN_QUESTION,
+    completion_name="ada2",
+    model=EMBEDDING_MODEL,
 )
 
 
@@ -65,7 +76,7 @@ async def explain_repo_file_in_isolation(file: Path | str, gpt4: bool = False) -
     return explanation
 
 
-async def main() -> None:
+async def explain_everything() -> None:
     # repo_files = list_files_in_specific_repo_chunked(reduced_list=True)[0]
     repo_files = list_files_in_specific_repo(reduced_list=True)
     print()
@@ -135,3 +146,34 @@ async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[
     print()
     print(explainer.model)
     print()
+
+
+async def embed_everything() -> None:
+    repo_files = list_files_in_specific_repo(reduced_list=True)
+    print()
+    for file in repo_files:
+        print(file)
+    print()
+    print(len(repo_files))
+    print()
+
+    failed_files = []
+    for idx, file in enumerate(repo_files):
+        try:
+            print(idx + 1, "/", len(repo_files), "-", file)
+            await ada_embedder.file_related_embedding(
+                content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"), repo_file=file
+            )
+        except Exception:
+            traceback.print_exc()
+            failed_files.append(file)
+
+    if failed_files:
+        print()
+        print("FAILED FILES:")
+        print()
+        for file in failed_files:
+            print(file)
+        print()
+        print(len(failed_files))
+        print()

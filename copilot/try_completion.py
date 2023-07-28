@@ -1,12 +1,5 @@
+from copilot.explain_repo import ada_embedder
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.cached_completions import RepoCompletions
-from copilot.utils.misc import EMBEDDING_MODEL
-
-ada_embedder = RepoCompletions(
-    repo=REPO_PATH_IN_QUESTION,
-    completion_name="ada2",
-    model=EMBEDDING_MODEL,
-)
 
 
 async def main() -> None:

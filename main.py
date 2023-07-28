@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# from copilot.explain_repo import main
-from copilot.try_completion import main
+# from copilot.try_completion import main
+from copilot.explain_repo import embed_everything
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(embed_everything())
