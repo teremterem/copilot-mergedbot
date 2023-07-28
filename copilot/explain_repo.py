@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught
 import traceback
 from pathlib import Path
 from typing import Iterable
@@ -35,8 +36,36 @@ gpt4_explainer = RepoCompletions(
 )
 
 
+async def explain_repo_file_in_isolation(file: Path | str, gpt4: bool = False) -> str:
+    messages = EXPLAIN_FILE_PROMPT.format_messages(
+        repo_name=REPO_PATH_IN_QUESTION.name,
+        file_path=file,
+        file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
+    )
+    messages = [convert_lc_message_to_openai(m) for m in messages]
+
+    if gpt4:
+        return await gpt4_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+
+    explanation = await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file, cache_only=True)
+    if explanation is None:
+        # short model cache miss - try the long model cache
+        explanation = await gpt3_long_explainer.file_related_chat_completion(
+            messages=messages, repo_file=file, cache_only=True
+        )
+
+    if explanation is None:
+        # cache miss for both models - generate a new completion
+        try:
+            explanation = await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+        except Exception:  # TODO use more specific exceptions ?
+            # short model failed - try the long model
+            explanation = await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+
+    return explanation
+
+
 async def main() -> None:
-    # pylint: disable=broad-exception-caught
     # repo_files = list_files_in_specific_repo_chunked(reduced_list=True)[0]
     repo_files = list_files_in_specific_repo(reduced_list=True)
     print()
