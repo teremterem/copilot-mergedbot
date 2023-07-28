@@ -80,8 +80,13 @@ class RepoCompletions:
         return repo_file, prompt_json_file, response_file, result
 
     async def file_related_chat_completion(
-        self, messages: Iterable[dict[str, str]], repo_file: Path | str, raise_if_incomplete=True, **kwargs
-    ) -> str:
+        self,
+        messages: Iterable[dict[str, str]],
+        repo_file: Path | str,
+        cache_only: bool = False,
+        raise_if_incomplete: bool = True,
+        **kwargs,
+    ) -> str | None:
         # update local kwargs with self.kwargs but make sure that local kwargs take precedence
         kwargs = {**self.kwargs, **kwargs, "messages": messages}
 
@@ -97,6 +102,8 @@ class RepoCompletions:
             return result
 
         logger.debug("Cache entries for file `%s` not found. Generating a new completion.", repo_file.as_posix())
+        if cache_only:
+            return None
 
         # pylint: disable=import-outside-toplevel
         from promptlayer import openai
