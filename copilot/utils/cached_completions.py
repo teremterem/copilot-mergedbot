@@ -134,7 +134,7 @@ class RepoCompletions:
 
         return completion_str
 
-    async def file_related_embedding(self, content: str, repo_file: Path | str, **kwargs) -> str:
+    async def file_related_embedding(self, content: str, repo_file: Path | str, **kwargs) -> list[float]:
         # update local kwargs with self.kwargs but make sure that local kwargs take precedence
         kwargs = {**self.kwargs, **kwargs, "input": [content]}
 

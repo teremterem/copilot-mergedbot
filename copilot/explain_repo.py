@@ -1,8 +1,11 @@
 # pylint: disable=broad-exception-caught
+import json
 import traceback
 from pathlib import Path
 from typing import Iterable
 
+import faiss
+import numpy as np
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
 from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo
@@ -162,11 +165,17 @@ async def embed_everything() -> None:
     print(len(repo_files))
     print()
 
+    embeddings = []
+    embedded_files = []
+
     failed_files = []
     for idx, file in enumerate(repo_files):
         try:
             print(idx + 1, "/", len(repo_files), "-", file)
-            await ada_embedder.file_related_embedding(await explain_repo_file_in_isolation(file), repo_file=file)
+            embeddings.append(
+                await ada_embedder.file_related_embedding(await explain_repo_file_in_isolation(file), repo_file=file)
+            )
+            embedded_files.append(file.as_posix())
         except Exception:
             traceback.print_exc()
             failed_files.append(file)
@@ -180,3 +189,8 @@ async def embed_everything() -> None:
         print()
         print(len(failed_files))
         print()
+
+    index = faiss.IndexFlatL2(len(embeddings[0]))
+    index.add(np.array(embeddings, dtype=np.float32))  # pylint: disable=no-value-for-parameter
+    faiss.write_index(index, str(REPO_PATH_IN_QUESTION / "explanations.faiss"))
+    (REPO_PATH_IN_QUESTION / "explanation_files.json").write_text(json.dumps(embedded_files), encoding="utf-8")
