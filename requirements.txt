@@ -39,7 +39,7 @@ langchain==0.0.242
     # via
     #   -r requirements.in
     #   promptlayer
-langsmith==0.0.14
+langsmith==0.0.15
     # via langchain
 marshmallow==3.20.1
     # via dataclasses-json
@@ -53,6 +53,7 @@ numexpr==2.8.4
     # via langchain
 numpy==1.25.1
     # via
+    #   -r requirements.in
     #   langchain
     #   numexpr
 openai==0.27.8
