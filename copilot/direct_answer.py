@@ -42,7 +42,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
     user_request = context.concluding_request.content
     result = await openai.Embedding.acreate(input=[user_request], model=EMBEDDING_MODEL, temperature=0)
     embedding = result["data"][0]["embedding"]
-    scores, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 10)
+    scores, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 20)
 
     recalled_files_msg = "\n".join(
         f"{score:.2f} {INDEXED_EXPL_FILES[idx]}" for score, idx in zip(scores[0], indices[0])
@@ -60,7 +60,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
 
     gpt_response = await openai.ChatCompletion.acreate(
         model=SLOW_GPT_MODEL,
-        temperature=0.5,
+        temperature=0,
         pl_tags=["direct_answer"],
         messages=prompt_openai,
     )
