@@ -193,4 +193,6 @@ async def embed_everything() -> None:
     index = faiss.IndexFlatL2(len(embeddings[0]))
     index.add(np.array(embeddings, dtype=np.float32))  # pylint: disable=no-value-for-parameter
     faiss.write_index(index, str(REPO_PATH_IN_QUESTION / "explanations.faiss"))
-    (REPO_PATH_IN_QUESTION / "explanation_files.json").write_text(json.dumps(embedded_files), encoding="utf-8")
+    (REPO_PATH_IN_QUESTION / "explanation_files.json").write_text(
+        json.dumps(embedded_files, indent=2), encoding="utf-8"
+    )
