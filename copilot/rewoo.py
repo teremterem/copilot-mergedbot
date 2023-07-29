@@ -1,13 +1,17 @@
+# pylint: disable=no-name-in-module
 import json
 from pathlib import Path
 
+import faiss
+import numpy as np
 from botmerger import SingleTurnContext, BotResponses
 from langchain import LLMChain
 from langchain.chat_models import PromptLayerChatOpenAI
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from promptlayer import openai
 
 from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo_chunked
-from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger
+from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger, EMBEDDING_MODEL
 
 REWOO_PLANNER_PROMPT = ChatPromptTemplate.from_messages(
     [
@@ -80,9 +84,24 @@ Here is the expected format of your response:\
     ]
 )
 
+EXPLANATIONS_FAISS = faiss.read_index(str(REPO_PATH_IN_QUESTION / "explanations.faiss"))
+INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json").read_text(encoding="utf-8"))
+
 
 @bot_merger.create_bot("ReWOO")
 async def rewoo(context: SingleTurnContext) -> None:
+    # pylint: disable=too-many-locals
+    user_request = context.concluding_request.content
+    result = await openai.Embedding.acreate(input=[user_request], model=EMBEDDING_MODEL, temperature=0)
+    embedding = result["data"][0]["embedding"]
+    scores, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 10)
+
+    recalled_files_msg = "\n".join(
+        f"{score:.2f} {INDEXED_EXPL_FILES[idx]}" for score, idx in zip(scores[0], indices[0])
+    )
+    await context.yield_final_response(f"```\n{recalled_files_msg}\n```")
+    return
+
     file_list: list[Path] = list_files_in_specific_repo_chunked()[0]
     file_list_str = "\n".join(f.as_posix() for f in file_list)
 
@@ -108,7 +127,7 @@ async def rewoo(context: SingleTurnContext) -> None:
             file_list=file_list_str,
             # file_outlines="\n\n\n".join(get_botmerger_outlines()),
             # tools="\n\n".join([f"{bot.alias}[input]: {bot.description}" for bot in rewoo_tools]),
-            request=context.concluding_request.content,
+            request=user_request,
         )
     )
     await context.yield_final_response(generated_plan)

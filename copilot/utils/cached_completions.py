@@ -4,8 +4,6 @@ import logging
 from pathlib import Path
 from typing import Iterable, Any
 
-from copilot.utils.misc import SLOW_GPT_MODEL
-
 COPILOT_MERGEDBOT_DIR_NAME = ".copilot-mergedbot"
 PROMPTS_DIR_NAME = "prompts"
 RESPONSES_DIR_NAME = "responses"
@@ -21,7 +19,7 @@ class RepoCompletions:
         self,
         repo: Path | str,
         completion_name: str,
-        model: str = SLOW_GPT_MODEL,
+        model: str,
         temperature: float = 0.0,
         **kwargs,
     ):
