@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught
 import traceback
 from pathlib import Path
 from typing import Iterable
@@ -6,7 +7,13 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 
 from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo
 from copilot.utils.cached_completions import RepoCompletions
-from copilot.utils.misc import FAST_GPT_MODEL, FAST_LONG_GPT_MODEL, SLOW_GPT_MODEL, convert_lc_message_to_openai
+from copilot.utils.misc import (
+    convert_lc_message_to_openai,
+    FAST_GPT_MODEL,
+    FAST_LONG_GPT_MODEL,
+    SLOW_GPT_MODEL,
+    EMBEDDING_MODEL,
+)
 
 EXPLAIN_FILE_PROMPT = ChatPromptTemplate.from_messages(
     [
@@ -33,10 +40,48 @@ gpt4_explainer = RepoCompletions(
     completion_name="gpt4-expl",
     model=SLOW_GPT_MODEL,
 )
+ada_embedder = RepoCompletions(
+    repo=REPO_PATH_IN_QUESTION,
+    completion_name="ada2-expl",
+    model=EMBEDDING_MODEL,
+)
 
 
-async def main() -> None:
-    # pylint: disable=broad-exception-caught
+async def explain_repo_file_in_isolation(file: Path | str, gpt4: bool = False) -> str:
+    if not isinstance(file, Path):
+        file = Path(file)
+
+    messages = EXPLAIN_FILE_PROMPT.format_messages(
+        repo_name=REPO_PATH_IN_QUESTION.name,
+        file_path=file,
+        file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
+    )
+    messages = [convert_lc_message_to_openai(m) for m in messages]
+
+    if gpt4:
+        explanation = await gpt4_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+    else:
+        explanation = await gpt3_explainer.file_related_chat_completion(
+            messages=messages, repo_file=file, cache_only=True
+        )
+        if explanation is None:
+            # short model cache miss - try the long model cache
+            explanation = await gpt3_long_explainer.file_related_chat_completion(
+                messages=messages, repo_file=file, cache_only=True
+            )
+
+        if explanation is None:
+            # cache miss for both models - generate a new completion
+            try:
+                explanation = await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+            except Exception:  # TODO use more specific exceptions ?
+                # short model failed - try the long model
+                explanation = await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
+
+    return f"FILE: {file.as_posix()}\n\n{explanation}"
+
+
+async def explain_everything() -> None:
     # repo_files = list_files_in_specific_repo_chunked(reduced_list=True)[0]
     repo_files = list_files_in_specific_repo(reduced_list=True)
     print()
@@ -56,7 +101,7 @@ async def main() -> None:
                 file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
             )
             messages = [convert_lc_message_to_openai(m) for m in messages]
-            await gpt3_explainer.chat_completion_for_file(messages=messages, repo_file=file)
+            await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file)
         except Exception:
             traceback.print_exc()
             failed_files.append(file)
@@ -81,7 +126,7 @@ async def main() -> None:
                     file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
                 )
                 messages = [convert_lc_message_to_openai(m) for m in messages]
-                await gpt3_long_explainer.chat_completion_for_file(messages=messages, repo_file=file)
+                await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
             except Exception:
                 traceback.print_exc()
                 files_that_failed_again.append(file)
@@ -102,7 +147,36 @@ async def main() -> None:
 async def print_explanation(explainer: RepoCompletions, messages: Iterable[dict[str, str]], file: Path | str) -> None:
     print("====================================================================================================")
     print()
-    print(await explainer.chat_completion_for_file(messages=messages, repo_file=file))
+    print(await explainer.file_related_chat_completion(messages=messages, repo_file=file))
     print()
     print(explainer.model)
     print()
+
+
+async def embed_everything() -> None:
+    repo_files = list_files_in_specific_repo(reduced_list=True)
+    print()
+    for file in repo_files:
+        print(file)
+    print()
+    print(len(repo_files))
+    print()
+
+    failed_files = []
+    for idx, file in enumerate(repo_files):
+        try:
+            print(idx + 1, "/", len(repo_files), "-", file)
+            await ada_embedder.file_related_embedding(await explain_repo_file_in_isolation(file), repo_file=file)
+        except Exception:
+            traceback.print_exc()
+            failed_files.append(file)
+
+    if failed_files:
+        print()
+        print("FAILED FILES:")
+        print()
+        for file in failed_files:
+            print(file)
+        print()
+        print(len(failed_files))
+        print()

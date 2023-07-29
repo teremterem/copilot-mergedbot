@@ -7,6 +7,7 @@ from langchain.schema import BaseMessage
 FAST_GPT_MODEL = "gpt-3.5-turbo-0613"
 FAST_LONG_GPT_MODEL = "gpt-3.5-turbo-16k-0613"
 SLOW_GPT_MODEL = "gpt-4-0613"
+EMBEDDING_MODEL = "text-embedding-ada-002"
 
 bot_merger = InMemoryBotMerger()
 
