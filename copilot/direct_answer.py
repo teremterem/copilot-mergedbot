@@ -12,12 +12,12 @@ from copilot.explain_repo import explain_repo_file_in_isolation
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
 from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger, EMBEDDING_MODEL, convert_lc_message_to_openai
 
-REWOO_PLANNER_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
+DIRECT_ANSWER_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(
             """\
-You are a chatbot that is good at analysing the code in the repository by the name `{repo_name}` as well as answering \
-questions about the concepts that can be found in this repository.
+You are a chatbot that is good at answering questions about the concepts that can be found in the repository by the \
+name `{repo_name}`.
 
 Below are the summaries of the source code files from `{repo_name}` repo which may or may not be relevant to the \
 request that came from the user (the request itself will be provided later).\
@@ -25,59 +25,9 @@ request that came from the user (the request itself will be provided later).\
         ),
     ]
 )
-REWOO_PLANNER_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
+DIRECT_ANSWER_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
     [
-        SystemMessagePromptTemplate.from_template(
-            """\
-For the following tasks, make plans that can solve the problem step-by-step. For each plan, indicate which external \
-tool together with tool input to retrieve evidence. You can store the evidence into a variable that can be called \
-by later tools.
-
-Here is the expected format of your response:\
-"""
-        ),
-        SystemMessagePromptTemplate.from_template(
-            """\
-{{
-    "evidence1": {{
-        "plan": "explanation of a step of the plan",
-        "tool": "Tool1",
-        "tool_input": "free form text",
-        "context": []
-    }},
-    "evidence2": {{
-        "plan": "explanation of a step of the plan",
-        "tool": "Tool2",
-        "tool_input": "free form text",
-        "context": []
-    }},
-    "evidence3": {{
-        "plan": "explanation of a step of the plan",
-        "tool": "Tool1",
-        "tool_input": "free form text",
-        "context": ["evidence2"]
-    }},
-    "evidence4": {{
-        "plan": "explanation of a step of the plan",
-        "tool": "Tool3",
-        "tool_input": "free form text",
-        "context": ["evidence1", "evidence3"]
-    }}
-}}\
-"""
-        ),
-        #         SystemMessagePromptTemplate.from_template(
-        #             """\
-        # Tools can be one of the following:
-        #
-        # {tools}
-        #
-        # Begin! Describe your plans with rich details. RESPOND WITH VALID JSON ONLY AND NO OTHER TEXT.\
-        # """
-        #         ),
-        SystemMessagePromptTemplate.from_template(
-            "Begin! Describe your plans with rich details. RESPOND WITH VALID JSON ONLY AND NO OTHER TEXT."
-        ),
+        SystemMessagePromptTemplate.from_template("Now, respond to the following request that came from a user."),
         HumanMessagePromptTemplate.from_template("{request}"),
     ]
 )
@@ -99,36 +49,26 @@ async def rewoo(context: SingleTurnContext) -> None:
     )
     await context.yield_interim_response(f"```\n{recalled_files_msg}\n```")
 
-    planner_prompt_prefix = REWOO_PLANNER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
-    planner_recalled_files = [
+    prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
+    recalled_files = [
         HumanMessage(content=await explain_repo_file_in_isolation(file=INDEXED_EXPL_FILES[idx])) for idx in indices[0]
     ]
-    planner_prompt_suffix = REWOO_PLANNER_PROMPT_SUFFIX.format_messages(
-        # tools="\n\n".join([f"{bot.alias}[input]: {bot.description}" for bot in rewoo_tools]),
-        request=user_request,
-    )
+    prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages(request=user_request)
 
-    # rewoo_tools = (
-    #     explain_file_bot.bot,
-    #     generate_file_outline.bot,
-    #     read_file_bot.bot,
-    #     rewoo.bot,
-    #     simpler_llm.bot,
-    # )
-    planner_prompt = [*planner_prompt_prefix, *planner_recalled_files, *planner_prompt_suffix]
-    planner_prompt_openai = [convert_lc_message_to_openai(m) for m in planner_prompt]
+    prompt = [*prompt_prefix, *recalled_files, *prompt_suffix]
+    prompt_openai = [convert_lc_message_to_openai(m) for m in prompt]
 
     gpt_response = await openai.ChatCompletion.acreate(
         model=SLOW_GPT_MODEL,
         temperature=0.5,
-        pl_tags=["rewoo_planner"],
-        messages=planner_prompt_openai,
+        pl_tags=["direct_answer"],
+        messages=prompt_openai,
     )
     completion = gpt_response.choices[0]
     if completion.finish_reason != "stop":
         raise RuntimeError(f"Incomplete text completion (finish_reason: {completion.finish_reason})")
     generated_plan = json.loads(completion.message.content)
-    await context.yield_interim_response(generated_plan)
+    await context.yield_final_response(generated_plan)
 
     promises: dict[str, BotResponses] = {}
     for evidence_id, plan in generated_plan.items():
