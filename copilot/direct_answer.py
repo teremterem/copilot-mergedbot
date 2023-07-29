@@ -3,7 +3,7 @@ import json
 
 import faiss
 import numpy as np
-from botmerger import SingleTurnContext, BotResponses
+from botmerger import SingleTurnContext
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import HumanMessage
 from promptlayer import openai
@@ -36,8 +36,8 @@ EXPLANATIONS_FAISS = faiss.read_index(str(REPO_PATH_IN_QUESTION / "explanations.
 INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json").read_text(encoding="utf-8"))
 
 
-@bot_merger.create_bot("ReWOO")
-async def rewoo(context: SingleTurnContext) -> None:
+@bot_merger.create_bot("DirectAnswerBot")
+async def direct_answer(context: SingleTurnContext) -> None:
     # pylint: disable=too-many-locals
     user_request = context.concluding_request.content
     result = await openai.Embedding.acreate(input=[user_request], model=EMBEDDING_MODEL, temperature=0)
@@ -67,18 +67,7 @@ async def rewoo(context: SingleTurnContext) -> None:
     completion = gpt_response.choices[0]
     if completion.finish_reason != "stop":
         raise RuntimeError(f"Incomplete text completion (finish_reason: {completion.finish_reason})")
-    generated_plan = json.loads(completion.message.content)
-    await context.yield_final_response(generated_plan)
-
-    promises: dict[str, BotResponses] = {}
-    for evidence_id, plan in generated_plan.items():
-        bot = await bot_merger.find_bot(plan["tool"])
-        plan_context = [promises[previous_evidence_id] for previous_evidence_id in plan["context"]]
-        promises[evidence_id] = await bot.trigger(requests=[*plan_context, plan["tool_input"]])
-
-    for idx, (evidence_id, responses) in enumerate(promises.items()):
-        await context.yield_interim_response(f"```\n{evidence_id}\n```")
-        await context.yield_from(responses, still_thinking=True if idx < len(promises) - 1 else None)
+    await context.yield_final_response(completion.message.content)
 
 
-main_bot = rewoo.bot
+main_bot = direct_answer.bot
