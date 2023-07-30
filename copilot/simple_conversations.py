@@ -1,4 +1,5 @@
 # pylint: disable=no-name-in-module
+import re
 from typing import List
 
 from botmerger import SingleTurnContext, MergedMessage, MergedBot
@@ -59,8 +60,7 @@ async def get_relevant_history(
             pl_tags=["chat_history_filter"],
             messages=filter_prompt,
         )
-        # `message_numbers_to_keep` contains a string with numbers in it. We need to extract those numbers.
-        message_numbers_to_keep = {int(s) for s in message_numbers_to_keep.split() if s.isdigit()}
+        message_numbers_to_keep = [int(n) for n in re.findall(r"\d+", message_numbers_to_keep)]
         history = [msg for i, msg in enumerate(history, start=1) if i in message_numbers_to_keep]
 
     if include_request:
