@@ -61,7 +61,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
     recalled_files_msg = "\n".join(
         f"{score:.2f} {INDEXED_EXPL_FILES[idx]}" for score, idx in zip(scores[0], indices[0])
     )
-    await context.yield_interim_response(f"```\n{recalled_files_msg}\n```")
+    await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
     recalled_files = [
