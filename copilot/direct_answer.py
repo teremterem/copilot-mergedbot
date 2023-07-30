@@ -1,4 +1,5 @@
 # pylint: disable=no-name-in-module
+import itertools
 import json
 
 import faiss
@@ -50,7 +51,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
     # pylint: disable=too-many-locals
     conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
     embedding_query = "\n\n".join(
-        f"{get_openai_role_name(msg, context.this_bot)}: {msg.content}" for msg in conversation
+        f"{get_openai_role_name(msg, context.this_bot).upper()}: {msg.content}" for msg in conversation
     )
 
     result = await openai.Embedding.acreate(input=[embedding_query], model=EMBEDDING_MODEL, temperature=0)
@@ -64,14 +65,20 @@ async def direct_answer(context: SingleTurnContext) -> None:
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
     recalled_files = [
-        # TODO do I really need gpt4 to do "isolated explanation" of a file ?
-        HumanMessage(content=await explain_repo_file_in_isolation(file=INDEXED_EXPL_FILES[idx], gpt4=True))
+        # TODO do I need gpt4 to do "isolated explanations" of files ?
+        HumanMessage(content=await explain_repo_file_in_isolation(file=INDEXED_EXPL_FILES[idx]))  # , gpt4=True))
         for idx in indices[0]
     ]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
 
-    prompt = [*prompt_prefix, *recalled_files, *prompt_suffix, *conversation]
-    prompt_openai = langchain_messages_to_openai(prompt)
+    prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_files, prompt_suffix))
+    prompt_openai.extend(
+        {
+            "role": get_openai_role_name(msg, context.this_bot),
+            "content": msg.content,
+        }
+        for msg in await get_filtered_conversation(context.concluding_request, context.this_bot)
+    )
 
     completion = await reliable_chat_completion(
         model=SLOW_GPT_MODEL,
