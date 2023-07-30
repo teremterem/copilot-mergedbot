@@ -4,7 +4,7 @@ from typing import List
 from botmerger import SingleTurnContext, MergedMessage
 from promptlayer import openai
 
-from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger
+from copilot.utils.misc import bot_merger, FAST_GPT_MODEL
 
 
 async def get_relevant_history(
@@ -27,7 +27,7 @@ async def simple_conversation(context: SingleTurnContext) -> None:
         for msg in await get_relevant_history(context.concluding_request, include_request=True)
     ]
     gpt_response = await openai.ChatCompletion.acreate(
-        model=SLOW_GPT_MODEL,
+        model=FAST_GPT_MODEL,
         temperature=0,
         pl_tags=["simple_conversation"],
         messages=conversation,
