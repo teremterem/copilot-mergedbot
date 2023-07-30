@@ -41,26 +41,30 @@ async def get_relevant_history(
 ) -> List[MergedMessage]:
     # TODO move this to `utils` package
     history = await request.get_conversation_history(max_length=history_max_length)
-    chat_history_parts = [
-        f"[{i}] {get_role_name(msg, this_bot).upper()}: {msg.content}" for i, msg in enumerate(history, start=1)
-    ]
 
-    chat_history = "\n\n".join(chat_history_parts)
-    current_message = f"[CURRENT] {get_role_name(request, this_bot).upper()}: {request.content}"
-    filter_prompt = CHAT_HISTORY_FILTER_PROMPT.format_messages(
-        chat_history=chat_history,
-        current_message=current_message,
-    )
-    filter_prompt = langchain_messages_to_openai(filter_prompt)
-    message_indices_to_keep = await reliable_chat_completion(
-        model=FAST_GPT_MODEL,
-        temperature=0,
-        pl_tags=["chat_history_filter"],
-        messages=filter_prompt,
-    )
-    print()
-    print(message_indices_to_keep)
-    print()
+    if history:
+        chat_history_parts = [
+            f"[{i}] {get_role_name(msg, this_bot).upper()}: {msg.content}" for i, msg in enumerate(history, start=1)
+        ]
+        chat_history = "\n\n".join(chat_history_parts)
+        current_message = f"[CURRENT] {get_role_name(request, this_bot).upper()}: {request.content}"
+        filter_prompt = CHAT_HISTORY_FILTER_PROMPT.format_messages(
+            chat_history=chat_history,
+            current_message=current_message,
+        )
+        filter_prompt = langchain_messages_to_openai(filter_prompt)
+        message_indices_to_keep = await reliable_chat_completion(
+            model=FAST_GPT_MODEL,
+            temperature=0,
+            pl_tags=["chat_history_filter"],
+            messages=filter_prompt,
+        )
+        # `message_indices_to_keep` contains a string with numbers in it. We need to extract those numbers.
+        message_indices_to_keep = [int(s) - 1 for s in message_indices_to_keep.split() if s.isdigit()]
+
+        message_indices_to_keep.sort(reverse=True)
+        for idx in message_indices_to_keep:
+            del history[idx]
 
     if include_request:
         history.append(request)
