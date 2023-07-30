@@ -12,9 +12,8 @@ async def simple_conversation(context: SingleTurnContext) -> None:
             "role": "user",
             "content": req.content,
         }
-        for req in context.requests
+        async for req in context.get_full_conversation()
     ]
-
     gpt_response = await openai.ChatCompletion.acreate(
         model=SLOW_GPT_MODEL,
         temperature=0,
