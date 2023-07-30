@@ -10,7 +10,13 @@ from promptlayer import openai
 
 from copilot.explain_repo import explain_repo_file_in_isolation
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger, EMBEDDING_MODEL, convert_lc_message_to_openai
+from copilot.utils.misc import (
+    SLOW_GPT_MODEL,
+    bot_merger,
+    EMBEDDING_MODEL,
+    convert_lc_message_to_openai,
+    reliable_chat_completion,
+)
 
 REWOO_PLANNER_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
     [
@@ -118,16 +124,13 @@ async def rewoo(context: SingleTurnContext) -> None:
     planner_prompt = [*planner_prompt_prefix, *planner_recalled_files, *planner_prompt_suffix]
     planner_prompt_openai = [convert_lc_message_to_openai(m) for m in planner_prompt]
 
-    gpt_response = await openai.ChatCompletion.acreate(
+    completion = await reliable_chat_completion(
         model=SLOW_GPT_MODEL,
         temperature=0.5,
         pl_tags=["rewoo_planner"],
         messages=planner_prompt_openai,
     )
-    completion = gpt_response.choices[0]
-    if completion.finish_reason != "stop":
-        raise RuntimeError(f"Incomplete text completion (finish_reason: {completion.finish_reason})")
-    generated_plan = json.loads(completion.message.content)
+    generated_plan = json.loads(completion)
     await context.yield_interim_response(generated_plan)
 
     promises: dict[str, BotResponses] = {}

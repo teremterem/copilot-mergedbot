@@ -10,7 +10,13 @@ from promptlayer import openai
 
 from copilot.explain_repo import explain_repo_file_in_isolation
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger, EMBEDDING_MODEL, convert_lc_message_to_openai
+from copilot.utils.misc import (
+    SLOW_GPT_MODEL,
+    bot_merger,
+    EMBEDDING_MODEL,
+    convert_lc_message_to_openai,
+    reliable_chat_completion,
+)
 
 DIRECT_ANSWER_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
     [
@@ -58,16 +64,13 @@ async def direct_answer(context: SingleTurnContext) -> None:
     prompt = [*prompt_prefix, *recalled_files, *prompt_suffix]
     prompt_openai = [convert_lc_message_to_openai(m) for m in prompt]
 
-    gpt_response = await openai.ChatCompletion.acreate(
+    completion = await reliable_chat_completion(
         model=SLOW_GPT_MODEL,
         temperature=0,
         pl_tags=["direct_answer"],
         messages=prompt_openai,
     )
-    completion = gpt_response.choices[0]
-    if completion.finish_reason != "stop":
-        raise RuntimeError(f"Incomplete text completion (finish_reason: {completion.finish_reason})")
-    await context.yield_final_response(completion.message.content)
+    await context.yield_final_response(completion)
 
 
 main_bot = direct_answer.bot

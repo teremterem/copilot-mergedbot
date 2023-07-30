@@ -26,3 +26,14 @@ def convert_lc_message_to_openai(message: BaseMessage) -> dict[str, str]:
 
 def sort_paths(paths: Iterable[Path], case_insensitive: bool = False) -> list[Path]:
     return sorted(paths, key=lambda p: (p.as_posix().lower(), p.as_posix()) if case_insensitive else p.as_posix())
+
+
+async def reliable_chat_completion(**kwargs) -> str:
+    # pylint: disable=import-outside-toplevel,no-name-in-module
+    from promptlayer import openai
+
+    response = await openai.ChatCompletion.acreate(**kwargs)
+    completion = response.choices[0]
+    if completion.finish_reason != "stop":
+        raise RuntimeError(f"Incomplete chat completion (finish_reason: {completion.finish_reason})")
+    return completion.message.content
