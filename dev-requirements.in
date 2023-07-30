@@ -3,5 +3,5 @@ black==23.7.0
 ipython==8.14.0
 pip-tools==7.1.0
 pre-commit==3.3.3
-pylint==2.17.4
+pylint==2.17.5
 termcolor==2.3.0

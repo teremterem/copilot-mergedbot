@@ -1,8 +1,20 @@
 # pylint: disable=no-name-in-module
-from botmerger import SingleTurnContext
+from typing import List
+
+from botmerger import SingleTurnContext, MergedMessage
 from promptlayer import openai
 
 from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger
+
+
+async def get_relevant_history(
+    request: MergedMessage, include_request: bool = False, history_max_length: int = 20
+) -> List[MergedMessage]:
+    # TODO move this to `utils` package
+    history = await request.get_conversation_history(max_length=history_max_length)
+    if include_request:
+        history.append(request)
+    return history
 
 
 @bot_merger.create_bot("SimpleConversationBot")
@@ -12,7 +24,7 @@ async def simple_conversation(context: SingleTurnContext) -> None:
             "role": "assistant" if msg.sender == context.this_bot else "user",
             "content": msg.content,
         }
-        async for msg in context.get_full_conversation()
+        for msg in await get_relevant_history(context.concluding_request, include_request=True)
     ]
     gpt_response = await openai.ChatCompletion.acreate(
         model=SLOW_GPT_MODEL,
