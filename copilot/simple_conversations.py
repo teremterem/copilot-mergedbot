@@ -53,18 +53,15 @@ async def get_relevant_history(
             current_message=current_message,
         )
         filter_prompt = langchain_messages_to_openai(filter_prompt)
-        message_indices_to_keep = await reliable_chat_completion(
+        message_numbers_to_keep = await reliable_chat_completion(
             model=FAST_GPT_MODEL,
             temperature=0,
             pl_tags=["chat_history_filter"],
             messages=filter_prompt,
         )
-        # `message_indices_to_keep` contains a string with numbers in it. We need to extract those numbers.
-        message_indices_to_keep = [int(s) - 1 for s in message_indices_to_keep.split() if s.isdigit()]
-
-        message_indices_to_keep.sort(reverse=True)
-        for idx in message_indices_to_keep:
-            del history[idx]
+        # `message_numbers_to_keep` contains a string with numbers in it. We need to extract those numbers.
+        message_numbers_to_keep = {int(s) for s in message_numbers_to_keep.split() if s.isdigit()}
+        history = [msg for i, msg in enumerate(history, start=1) if i in message_numbers_to_keep]
 
     if include_request:
         history.append(request)
