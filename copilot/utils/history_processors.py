@@ -1,6 +1,6 @@
 # pylint: disable=no-name-in-module
 import re
-from typing import List
+from typing import List, Iterable
 
 from botmerger import MergedMessage, MergedBot
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate
@@ -14,20 +14,14 @@ from copilot.utils.misc import (
 
 CHAT_HISTORY_FILTER_PROMPT = ChatPromptTemplate.from_messages(
     [
-        HumanMessagePromptTemplate.from_template(
-            """\
-Here is a conversation history where each utterance has a number assigned to it (in brackets).
-
-{chat_history}\
-"""
+        SystemMessagePromptTemplate.from_template(
+            "Here is a conversation history where each utterance has a number assigned to it (in brackets)."
         ),
-        HumanMessagePromptTemplate.from_template(
-            """\
-And here is the current message (the one that goes right after the chat history).
-
-{current_message}\
-"""
+        HumanMessagePromptTemplate.from_template("{chat_history}"),
+        SystemMessagePromptTemplate.from_template(
+            "And here is the current message (the one that goes right after the conversation history)."
         ),
+        HumanMessagePromptTemplate.from_template("{current_message}"),
         SystemMessagePromptTemplate.from_template(
             """\
 Please select the numbers of the utterances which are important in relation to the current message and need to be \
@@ -67,3 +61,10 @@ async def get_filtered_conversation(
     if include_request:
         history.append(request)
     return history
+
+
+def format_conversation_for_single_message(conversation: Iterable[MergedMessage], this_bot: MergedBot) -> str:
+    conversation_str = "\n\n".join(
+        f"{get_openai_role_name(msg, this_bot).upper()}: {msg.content}" for msg in conversation
+    )
+    return conversation_str

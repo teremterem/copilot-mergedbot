@@ -11,7 +11,7 @@ from promptlayer import openai
 
 from copilot.explain_repo import explain_repo_file_in_isolation
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.history_processors import get_filtered_conversation
+from copilot.utils.history_processors import get_filtered_conversation, format_conversation_for_single_message
 from copilot.utils.misc import (
     SLOW_GPT_MODEL,
     bot_merger,
@@ -50,9 +50,7 @@ INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json
 async def direct_answer(context: SingleTurnContext) -> None:
     # pylint: disable=too-many-locals
     conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
-    embedding_query = "\n\n".join(
-        f"{get_openai_role_name(msg, context.this_bot).upper()}: {msg.content}" for msg in conversation
-    )
+    embedding_query = format_conversation_for_single_message(conversation, context.this_bot)
 
     result = await openai.Embedding.acreate(input=[embedding_query], model=EMBEDDING_MODEL, temperature=0)
     embedding = result["data"][0]["embedding"]
