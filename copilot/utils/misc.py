@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Iterable
 
-from botmerger import InMemoryBotMerger
+from botmerger import InMemoryBotMerger, MergedMessage, MergedBot
 from langchain.schema import BaseMessage
 
 FAST_GPT_MODEL = "gpt-3.5-turbo-0613"
@@ -10,6 +10,10 @@ SLOW_GPT_MODEL = "gpt-4-0613"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 bot_merger = InMemoryBotMerger()
+
+
+def get_openai_role_name(message: MergedMessage, this_bot: MergedBot) -> str:
+    return "assistant" if message.sender == this_bot else "user"
 
 
 def langchain_messages_to_openai(
