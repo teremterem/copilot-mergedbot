@@ -14,7 +14,7 @@ from copilot.utils.misc import (
     SLOW_GPT_MODEL,
     bot_merger,
     EMBEDDING_MODEL,
-    convert_lc_message_to_openai,
+    langchain_messages_to_openai,
     reliable_chat_completion,
 )
 
@@ -122,7 +122,7 @@ async def rewoo(context: SingleTurnContext) -> None:
     #     simpler_llm.bot,
     # )
     planner_prompt = [*planner_prompt_prefix, *planner_recalled_files, *planner_prompt_suffix]
-    planner_prompt_openai = [convert_lc_message_to_openai(m) for m in planner_prompt]
+    planner_prompt_openai = langchain_messages_to_openai(planner_prompt)
 
     completion = await reliable_chat_completion(
         model=SLOW_GPT_MODEL,

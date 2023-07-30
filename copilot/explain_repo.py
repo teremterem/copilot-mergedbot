@@ -11,7 +11,7 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 from copilot.specific_repo import REPO_PATH_IN_QUESTION, list_files_in_specific_repo
 from copilot.utils.cached_completions import RepoCompletions
 from copilot.utils.misc import (
-    convert_lc_message_to_openai,
+    langchain_messages_to_openai,
     FAST_GPT_MODEL,
     FAST_LONG_GPT_MODEL,
     SLOW_GPT_MODEL,
@@ -59,7 +59,7 @@ async def explain_repo_file_in_isolation(file: Path | str, gpt4: bool = False) -
         file_path=file,
         file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
     )
-    messages = [convert_lc_message_to_openai(m) for m in messages]
+    messages = langchain_messages_to_openai(messages)
 
     if gpt4:
         explanation = await gpt4_explainer.file_related_chat_completion(messages=messages, repo_file=file)
@@ -103,7 +103,7 @@ async def explain_everything() -> None:
                 file_path=file,
                 file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
             )
-            messages = [convert_lc_message_to_openai(m) for m in messages]
+            messages = langchain_messages_to_openai(messages)
             await gpt3_explainer.file_related_chat_completion(messages=messages, repo_file=file)
         except Exception:
             traceback.print_exc()
@@ -128,7 +128,7 @@ async def explain_everything() -> None:
                     file_path=file,
                     file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
                 )
-                messages = [convert_lc_message_to_openai(m) for m in messages]
+                messages = langchain_messages_to_openai(messages)
                 await gpt3_long_explainer.file_related_chat_completion(messages=messages, repo_file=file)
             except Exception:
                 traceback.print_exc()

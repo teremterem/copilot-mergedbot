@@ -12,16 +12,21 @@ EMBEDDING_MODEL = "text-embedding-ada-002"
 bot_merger = InMemoryBotMerger()
 
 
-def convert_lc_message_to_openai(message: BaseMessage) -> dict[str, str]:
-    if message.type == "human":
-        role = "user"
-    elif message.type == "ai":
-        role = "assistant"
-    elif message.type == "system":
-        role = "system"
-    else:
-        raise ValueError(f"Unexpected message type: {message.type}")
-    return {"role": role, "content": message.content}
+def langchain_messages_to_openai(
+    message: BaseMessage | Iterable[BaseMessage],
+) -> dict[str, str] | list[dict[str, str]]:
+    if isinstance(message, BaseMessage):
+        if message.type == "human":
+            role = "user"
+        elif message.type == "ai":
+            role = "assistant"
+        elif message.type == "system":
+            role = "system"
+        else:
+            raise ValueError(f"Unexpected message type: {message.type}")
+        return {"role": role, "content": message.content}
+
+    return [langchain_messages_to_openai(m) for m in message]
 
 
 def sort_paths(paths: Iterable[Path], case_insensitive: bool = False) -> list[Path]:

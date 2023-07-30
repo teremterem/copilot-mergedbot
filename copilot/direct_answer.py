@@ -14,7 +14,7 @@ from copilot.utils.misc import (
     SLOW_GPT_MODEL,
     bot_merger,
     EMBEDDING_MODEL,
-    convert_lc_message_to_openai,
+    langchain_messages_to_openai,
     reliable_chat_completion,
 )
 
@@ -62,7 +62,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages(request=user_request)
 
     prompt = [*prompt_prefix, *recalled_files, *prompt_suffix]
-    prompt_openai = [convert_lc_message_to_openai(m) for m in prompt]
+    prompt_openai = langchain_messages_to_openai(prompt)
 
     completion = await reliable_chat_completion(
         model=SLOW_GPT_MODEL,

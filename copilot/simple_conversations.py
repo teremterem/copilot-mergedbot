@@ -4,7 +4,7 @@ from typing import List
 from botmerger import SingleTurnContext, MergedMessage, MergedBot
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate
 
-from copilot.utils.misc import bot_merger, FAST_GPT_MODEL, reliable_chat_completion
+from copilot.utils.misc import bot_merger, FAST_GPT_MODEL, reliable_chat_completion, langchain_messages_to_openai
 
 CHAT_HISTORY_FILTER_PROMPT = ChatPromptTemplate.from_messages(
     [
@@ -51,6 +51,7 @@ async def get_relevant_history(
         chat_history=chat_history,
         current_message=current_message,
     )
+    filter_prompt = langchain_messages_to_openai(filter_prompt)
     message_indices_to_keep = await reliable_chat_completion(
         model=FAST_GPT_MODEL,
         temperature=0,
