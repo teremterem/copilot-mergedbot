@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Iterable
 
 from botmerger import InMemoryBotMerger, MergedMessage, MergedBot
+from langchain.chat_models.openai import _convert_message_to_dict
 from langchain.schema import BaseMessage
 
 FAST_GPT_MODEL = "gpt-3.5-turbo-0613"
@@ -16,21 +17,8 @@ def get_openai_role_name(message: MergedMessage, this_bot: MergedBot) -> str:
     return "assistant" if message.sender == this_bot else "user"
 
 
-def langchain_messages_to_openai(
-    message: BaseMessage | Iterable[BaseMessage],
-) -> dict[str, str] | list[dict[str, str]]:
-    if isinstance(message, BaseMessage):
-        if message.type == "human":
-            role = "user"
-        elif message.type == "ai":
-            role = "assistant"
-        elif message.type == "system":
-            role = "system"
-        else:
-            raise ValueError(f"Unexpected message type: {message.type}")
-        return {"role": role, "content": message.content}
-
-    return [langchain_messages_to_openai(m) for m in message]
+def langchain_messages_to_openai(messages: Iterable[BaseMessage]) -> list[dict[str, str]]:
+    return [_convert_message_to_dict(msg) for msg in messages]
 
 
 def sort_paths(paths: Iterable[Path], case_insensitive: bool = False) -> list[Path]:

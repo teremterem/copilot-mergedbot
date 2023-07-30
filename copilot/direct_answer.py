@@ -77,7 +77,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
             "role": get_openai_role_name(msg, context.this_bot),
             "content": msg.content,
         }
-        for msg in await get_filtered_conversation(context.concluding_request, context.this_bot)
+        for msg in conversation
     )
 
     completion = await reliable_chat_completion(
