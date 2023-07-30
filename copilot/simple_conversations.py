@@ -9,10 +9,10 @@ from copilot.utils.misc import SLOW_GPT_MODEL, bot_merger
 async def simple_conversation(context: SingleTurnContext) -> None:
     conversation = [
         {
-            "role": "user",
-            "content": req.content,
+            "role": "assistant" if msg.sender == context.this_bot else "user",
+            "content": msg.content,
         }
-        async for req in context.get_full_conversation()
+        async for msg in context.get_full_conversation()
     ]
     gpt_response = await openai.ChatCompletion.acreate(
         model=SLOW_GPT_MODEL,
