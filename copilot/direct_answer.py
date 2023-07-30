@@ -4,37 +4,40 @@ import json
 import faiss
 import numpy as np
 from botmerger import SingleTurnContext
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain.schema import HumanMessage
 from promptlayer import openai
 
 from copilot.explain_repo import explain_repo_file_in_isolation
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
+from copilot.utils.history_processors import get_filtered_conversation
 from copilot.utils.misc import (
     SLOW_GPT_MODEL,
     bot_merger,
     EMBEDDING_MODEL,
     langchain_messages_to_openai,
     reliable_chat_completion,
+    get_openai_role_name,
 )
 
 DIRECT_ANSWER_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(
             """\
-You are a chatbot that is good at answering questions about the concepts that can be found in the repository by the \
-name `{repo_name}`.
+You are an AI assistant that is good at answering questions about the concepts that can be found in the repository \
+by the name `{repo_name}`.
 
-Below are the summaries of the source code files from `{repo_name}` repo which may or may not be relevant to the \
-request that came from the user (the request itself will be provided later).\
+Below are the summaries of some source code files from `{repo_name}` repo which may or may not be relevant to the \
+conversation that you are currently having with the user.\
 """
         ),
     ]
 )
 DIRECT_ANSWER_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
     [
-        SystemMessagePromptTemplate.from_template("Now, respond to the following request that came from a user."),
-        HumanMessagePromptTemplate.from_template("{request}"),
+        SystemMessagePromptTemplate.from_template(
+            "Now, carry on with the conversation between you as an AI assistant and the user."
+        ),
     ]
 )
 
@@ -45,8 +48,12 @@ INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json
 @bot_merger.create_bot("DirectAnswerBot")
 async def direct_answer(context: SingleTurnContext) -> None:
     # pylint: disable=too-many-locals
-    user_request = context.concluding_request.content
-    result = await openai.Embedding.acreate(input=[user_request], model=EMBEDDING_MODEL, temperature=0)
+    conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
+    embedding_query = "\n\n".join(
+        f"{get_openai_role_name(msg, context.this_bot)}: {msg.content}" for msg in conversation
+    )
+
+    result = await openai.Embedding.acreate(input=[embedding_query], model=EMBEDDING_MODEL, temperature=0)
     embedding = result["data"][0]["embedding"]
     scores, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 20)
 
@@ -57,11 +64,13 @@ async def direct_answer(context: SingleTurnContext) -> None:
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
     recalled_files = [
-        HumanMessage(content=await explain_repo_file_in_isolation(file=INDEXED_EXPL_FILES[idx])) for idx in indices[0]
+        # TODO do I really need gpt4 to do "isolated explanation" of a file ?
+        HumanMessage(content=await explain_repo_file_in_isolation(file=INDEXED_EXPL_FILES[idx], gpt4=True))
+        for idx in indices[0]
     ]
-    prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages(request=user_request)
+    prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
 
-    prompt = [*prompt_prefix, *recalled_files, *prompt_suffix]
+    prompt = [*prompt_prefix, *recalled_files, *prompt_suffix, *conversation]
     prompt_openai = langchain_messages_to_openai(prompt)
 
     completion = await reliable_chat_completion(

@@ -5,7 +5,7 @@ import os
 import discord
 from botmerger.ext.discord_integration import attach_bot_to_discord
 
-from copilot.simple_conversations import main_bot
+from copilot.direct_answer import main_bot
 
 DISCORD_BOT_SECRET = os.environ["DISCORD_BOT_SECRET"]
 

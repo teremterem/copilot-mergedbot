@@ -38,8 +38,8 @@ kept. DO NOT EXPLAIN ANYTHING, JUST LIST THE NUMBERS.\
 )
 
 
-async def get_relevant_history(
-    request: MergedMessage, this_bot: MergedBot, include_request: bool = False, history_max_length: int = 20
+async def get_filtered_conversation(
+    request: MergedMessage, this_bot: MergedBot, include_request: bool = True, history_max_length: int = 20
 ) -> List[MergedMessage]:
     history = await request.get_conversation_history(max_length=history_max_length)
 
