@@ -1,6 +1,6 @@
 # pylint: disable=no-name-in-module
 import re
-from typing import List, Iterable
+from typing import Iterable
 
 from botmerger import MergedMessage, MergedBot
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate
@@ -34,7 +34,7 @@ kept. DO NOT EXPLAIN ANYTHING, JUST LIST THE NUMBERS.\
 
 async def get_filtered_conversation(
     request: MergedMessage, this_bot: MergedBot, include_request: bool = True, history_max_length: int = 20
-) -> List[MergedMessage]:
+) -> list[MergedMessage]:
     history = await request.get_conversation_history(max_length=history_max_length)
 
     if history:

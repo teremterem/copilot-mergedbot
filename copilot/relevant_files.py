@@ -5,16 +5,15 @@ import re
 
 import faiss
 import numpy as np
-from botmerger import SingleTurnContext
+from botmerger import MergedMessage, MergedBot
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import HumanMessage
 from promptlayer import openai
 
 from copilot.explain_repo import explain_repo_file_in_isolation
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.history_processors import get_filtered_conversation, format_conversation_for_single_message
+from copilot.utils.history_processors import format_conversation_for_single_message
 from copilot.utils.misc import (
-    bot_merger,
     EMBEDDING_MODEL,
     langchain_messages_to_openai,
     reliable_chat_completion,
@@ -51,11 +50,8 @@ EXPLANATIONS_FAISS = faiss.read_index(str(REPO_PATH_IN_QUESTION / "explanations.
 INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json").read_text(encoding="utf-8"))
 
 
-@bot_merger.create_bot("RelevantFilesBot")
-async def relevant_files(context: SingleTurnContext) -> None:
-    # pylint: disable=too-many-locals
-    conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
-    embedding_query = format_conversation_for_single_message(conversation, context.this_bot)
+async def get_relevant_files(conversation: list[MergedMessage], this_bot: MergedBot) -> list[str]:
+    embedding_query = format_conversation_for_single_message(conversation, this_bot)
 
     result = await openai.Embedding.acreate(input=[embedding_query], model=EMBEDDING_MODEL, temperature=0)
     embedding = result["data"][0]["embedding"]
@@ -69,7 +65,7 @@ async def relevant_files(context: SingleTurnContext) -> None:
         for idx, file in enumerate(fetched_files, start=1)
     ]
     prompt_suffix = RELEVANT_FILES_PROMPT_SUFFIX.format_messages(
-        chat_history=format_conversation_for_single_message(conversation, context.this_bot)
+        chat_history=format_conversation_for_single_message(conversation, this_bot)
     )
 
     prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_files, prompt_suffix))
@@ -82,9 +78,4 @@ async def relevant_files(context: SingleTurnContext) -> None:
     )
     file_numbers_to_keep = [int(n) for n in re.findall(r"\d+", completion)]
     filtered_files = [msg for i, msg in enumerate(fetched_files, start=1) if i in file_numbers_to_keep]
-
-    recalled_files_msg = "\n".join(f"{file}" for file in filtered_files)
-    await context.yield_final_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
-
-
-main_bot = relevant_files.bot
+    return filtered_files
