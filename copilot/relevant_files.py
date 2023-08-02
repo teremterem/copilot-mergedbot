@@ -34,7 +34,7 @@ conversation that you are currently having with the user. Each file has a number
 RELEVANT_FILES_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template("And here is a request from the user."),
-        HumanMessagePromptTemplate.from_template("{user_request}"),
+        HumanMessagePromptTemplate.from_template("USER: {user_request}"),
         SystemMessagePromptTemplate.from_template(
             """\
 Please select the numbers which correspond to the files that are relevant to the user's request. DO NOT EXPLAIN \

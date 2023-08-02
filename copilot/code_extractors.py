@@ -13,23 +13,26 @@ from copilot.utils.misc import (
 FILE_SNIPPETS_PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(
-            "Here is the content of `{file_path}`, a file from the `{repo_name}` repo:"
+            """\
+You are a "copy-paster" and you CANNOT write your own code, but you are good at repeating contents of a file \
+that is given to you back to the user verbatim, without any alterations.
+
+Here is the content of `{file_path}`, a file from the `{repo_name}` repo:\
+"""
         ),
         HumanMessagePromptTemplate.from_template("{file_content}"),
         SystemMessagePromptTemplate.from_template("And here is a request from the user."),
-        HumanMessagePromptTemplate.from_template("{user_request}"),
+        HumanMessagePromptTemplate.from_template("USER: {user_request}"),
         SystemMessagePromptTemplate.from_template(
             """\
-Output the content of the file `{file_path}` verbatim omitting parts that are not relevant to the user's request. If \
-nothing in this file is relevant to the conversation, output just one word: NONE
+Repeat the content of the file `{file_path}` back verbatim, but omit parts that are fully irrelevant to the user's \
+request. It's ok if the parts that you do repeat back do not satisfy the user's request fully, though. It's not \
+your job to satisfy the user. There is another assistant for that. Your job is only to repeat parts of \
+the file that are somewhat relevant. Your response will be used by that other assistant and that other \
+assistant will make sure to fulfil the user's request instead of you, so don't worry.
 
-DO NOT COME UP WITH YOUR OWN CODE, ONLY OUTPUT THE CODE THAT YOU SEE IN THE FILE!\
+If nothing in this file is relevant to the user's request at all then output just one word: NONE\
 """
-            # # The following piece seems to lead to hallucinations:
-            #
-            # Make sure to include the implementation details into the snippets, though, because those details might \
-            # be important for answering the request.\
-            # """
         ),
     ]
 )
