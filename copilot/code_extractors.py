@@ -21,11 +21,13 @@ FILE_SNIPPETS_PROMPT = ChatPromptTemplate.from_messages(
         SystemMessagePromptTemplate.from_template(
             """\
 Output the content of the file `{file_path}` verbatim omitting parts that are not relevant to the user's request. If \
-nothing in this file is relevant to the conversation, output just one word: NONE
-
-Make sure to include the implementation details into the snippets, though, because those details might be important \
-for answering the request.\
+nothing in this file is relevant to the conversation, output just one word: NONE\
 """
+            # # The following piece seems to lead to hallucinations:
+            #
+            # Make sure to include the implementation details into the snippets, though, because those details might \
+            # be important for answering the request.\
+            # """
         ),
     ]
 )
