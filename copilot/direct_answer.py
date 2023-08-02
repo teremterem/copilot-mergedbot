@@ -5,7 +5,7 @@ from botmerger import SingleTurnContext
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain.schema import HumanMessage
 
-from copilot.explain_repo import explain_repo_file_in_isolation
+from copilot.code_extractors import extract_relevant_snippets
 from copilot.relevant_files import get_relevant_files
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
 from copilot.utils.history_processors import get_filtered_conversation
@@ -24,8 +24,8 @@ DIRECT_ANSWER_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
 You are an AI assistant that is good at answering questions about the concepts that can be found in the repository \
 by the name `{repo_name}`.
 
-Below are the summaries of some source code files from `{repo_name}` repo which may or may not be relevant to the \
-conversation that you are currently having with the user.\
+Below are code snippets from some of the source code files of `{repo_name}` repo which may or may not be relevant to \
+the conversation that you are currently having with the user.\
 """
         ),
     ]
@@ -48,7 +48,11 @@ async def direct_answer(context: SingleTurnContext) -> None:
     await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
-    recalled_files = [HumanMessage(content=await explain_repo_file_in_isolation(file=file)) for file in relevant_files]
+    recalled_files = [
+        # TODO run code snippet extractors in parallel
+        HumanMessage(content=await extract_relevant_snippets(file, conversation, context.this_bot))
+        for file in relevant_files[:3]  # TODO get rid of this limit ?
+    ]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
 
     prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_files, prompt_suffix))

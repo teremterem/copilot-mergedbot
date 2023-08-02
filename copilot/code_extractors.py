@@ -1,15 +1,16 @@
 # pylint: disable=no-name-in-module
 from pathlib import Path
+from typing import Iterable
 
 from botmerger import MergedMessage, MergedBot
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate
 
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.history_processors import format_conversation_for_single_message, get_filtered_conversation
+from copilot.utils.history_processors import format_conversation_for_single_message
 from copilot.utils.misc import (
     reliable_chat_completion,
     langchain_messages_to_openai,
-    FAST_GPT_MODEL,
+    FAST_LONG_GPT_MODEL,
 )
 
 FILE_SNIPPETS_PROMPT = ChatPromptTemplate.from_messages(
@@ -32,13 +33,13 @@ nothing in this file is relevant to the conversation, output just one word: NONE
 )
 
 
-async def extract_relevant_snippets(file: Path | str, request: MergedMessage, this_bot: MergedBot) -> str:
+async def extract_relevant_snippets(
+    file: Path | str, conversation: Iterable[MergedMessage], this_bot: MergedBot
+) -> str:
     if not isinstance(file, Path):
         file = Path(file)
 
-    conversation = await get_filtered_conversation(request, this_bot)
     chat_history = format_conversation_for_single_message(conversation, this_bot)
-
     messages = FILE_SNIPPETS_PROMPT.format_messages(
         repo_name=REPO_PATH_IN_QUESTION.name,
         file_path=file,
@@ -48,9 +49,9 @@ async def extract_relevant_snippets(file: Path | str, request: MergedMessage, th
     messages = langchain_messages_to_openai(messages)
 
     completion = await reliable_chat_completion(
-        model=FAST_GPT_MODEL,
+        model=FAST_LONG_GPT_MODEL,
         temperature=0,
-        pl_tags=["direct_answer"],
+        pl_tags=["extract_snippets"],
         messages=messages,
     )
-    return completion
+    return f"FILE: {file.as_posix()}\n\n{completion}"
