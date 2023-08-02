@@ -8,7 +8,7 @@ from langchain.schema import HumanMessage
 from copilot.code_extractors import extract_relevant_snippets
 from copilot.relevant_files import get_relevant_files
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.history_processors import get_filtered_conversation, get_standalone_question
+from copilot.utils.history_processors import get_filtered_conversation, get_standalone_request
 from copilot.utils.misc import (
     SLOW_GPT_MODEL,
     bot_merger,
@@ -41,17 +41,17 @@ DIRECT_ANSWER_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
 
 @bot_merger.create_bot("DirectAnswerBot")
 async def direct_answer(context: SingleTurnContext) -> None:
-    await get_standalone_question(context.concluding_request, context.this_bot)
+    standalone_request = await get_standalone_request(context.concluding_request, context.this_bot)
     conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
 
-    relevant_files = await get_relevant_files(conversation, context.this_bot)
+    relevant_files = await get_relevant_files(standalone_request)
     recalled_files_msg = "\n".join(f"{file}" for file in relevant_files)
     await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
     recalled_files = [
         # TODO run code snippet extractors in parallel
-        HumanMessage(content=await extract_relevant_snippets(file, conversation, context.this_bot))
+        HumanMessage(content=await extract_relevant_snippets(file, standalone_request))
         for file in relevant_files[:3]  # TODO get rid of this limit ?
     ]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()

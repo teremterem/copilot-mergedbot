@@ -5,14 +5,12 @@ import re
 
 import faiss
 import numpy as np
-from botmerger import MergedMessage, MergedBot
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import HumanMessage
 from promptlayer import openai
 
 from copilot.explain_repo import explain_repo_file_in_isolation
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.history_processors import format_conversation_for_single_message
 from copilot.utils.misc import (
     EMBEDDING_MODEL,
     langchain_messages_to_openai,
@@ -35,11 +33,11 @@ conversation that you are currently having with the user. Each file has a number
 )
 RELEVANT_FILES_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
     [
-        SystemMessagePromptTemplate.from_template("And here is your conversation with the user."),
-        HumanMessagePromptTemplate.from_template("{chat_history}"),
+        SystemMessagePromptTemplate.from_template("And here is a request from the user."),
+        HumanMessagePromptTemplate.from_template("{user_request}"),
         SystemMessagePromptTemplate.from_template(
             """\
-Please select the numbers which correspond to the files that are relevant to the conversation. DO NOT EXPLAIN \
+Please select the numbers which correspond to the files that are relevant to the user's request. DO NOT EXPLAIN \
 ANYTHING, JUST LIST THE NUMBERS.\
 """
         ),
@@ -50,10 +48,8 @@ EXPLANATIONS_FAISS = faiss.read_index(str(REPO_PATH_IN_QUESTION / "explanations.
 INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json").read_text(encoding="utf-8"))
 
 
-async def get_relevant_files(conversation: list[MergedMessage], this_bot: MergedBot) -> list[str]:
-    embedding_query = format_conversation_for_single_message(conversation, this_bot)
-
-    result = await openai.Embedding.acreate(input=[embedding_query], model=EMBEDDING_MODEL, temperature=0)
+async def get_relevant_files(standalone_request: str) -> list[str]:
+    result = await openai.Embedding.acreate(input=[standalone_request], model=EMBEDDING_MODEL, temperature=0)
     embedding = result["data"][0]["embedding"]
     _, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 15)
 
@@ -64,9 +60,7 @@ async def get_relevant_files(conversation: list[MergedMessage], this_bot: Merged
         HumanMessage(content=f"[{idx}] {await explain_repo_file_in_isolation(file=file)}")
         for idx, file in enumerate(fetched_files, start=1)
     ]
-    prompt_suffix = RELEVANT_FILES_PROMPT_SUFFIX.format_messages(
-        chat_history=format_conversation_for_single_message(conversation, this_bot)
-    )
+    prompt_suffix = RELEVANT_FILES_PROMPT_SUFFIX.format_messages(user_request=standalone_request)
 
     prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_files, prompt_suffix))
 

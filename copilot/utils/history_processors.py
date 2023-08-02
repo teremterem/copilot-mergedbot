@@ -87,7 +87,7 @@ async def get_filtered_conversation(
     return history
 
 
-async def get_standalone_question(request: MergedMessage, this_bot: MergedBot, history_max_length: int = 20) -> str:
+async def get_standalone_request(request: MergedMessage, this_bot: MergedBot, history_max_length: int = 20) -> str:
     conversation = await request.get_full_conversation(max_length=history_max_length)
 
     if len(conversation) < 2:
@@ -96,13 +96,13 @@ async def get_standalone_question(request: MergedMessage, this_bot: MergedBot, h
     chat_history = format_conversation_for_single_message(conversation, this_bot)
     condenser_prompt = CONDENSED_QUESTION_PROMPT.format_messages(chat_history=chat_history)
     condenser_prompt = langchain_messages_to_openai(condenser_prompt)
-    condensed_question = await reliable_chat_completion(
+    standalone_request = await reliable_chat_completion(
         model=FAST_GPT_MODEL,
         temperature=0,
         pl_tags=["question_condenser"],
         messages=condenser_prompt,
     )
-    return condensed_question
+    return standalone_request
 
 
 def format_conversation_for_single_message(conversation: Iterable[MergedMessage], this_bot: MergedBot) -> str:
