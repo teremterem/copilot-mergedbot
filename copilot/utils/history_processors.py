@@ -32,6 +32,34 @@ kept. DO NOT EXPLAIN ANYTHING, JUST LIST THE NUMBERS.\
 )
 
 
+CONDENSED_QUESTION_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        SystemMessagePromptTemplate.from_template(
+            """\
+Given the following conversation and a follow up question, rephrase the follow up question to be a standalone \
+question. Make sure to reflect what the user really wants. The user may sometimes be indirect in their follow up \
+input, so you need to derive the user's intention from the full conversation that you have.\
+"""
+        ),
+        HumanMessagePromptTemplate.from_template(
+            """\
+# CHAT HISTORY
+
+{chat_history}
+
+# FOLLOW UP INPUT
+
+{current_message}
+
+# STANDALONE QUESTION
+
+USER:\
+"""
+        ),
+    ]
+)
+
+
 async def get_filtered_conversation(
     request: MergedMessage, this_bot: MergedBot, include_request: bool = True, history_max_length: int = 20
 ) -> list[MergedMessage]:
@@ -61,6 +89,28 @@ async def get_filtered_conversation(
     if include_request:
         history.append(request)
     return history
+
+
+async def get_standalone_question(request: MergedMessage, this_bot: MergedBot, history_max_length: int = 20) -> str:
+    history = await request.get_conversation_history(max_length=history_max_length)
+
+    if not history:
+        return request.content
+
+    chat_history = format_conversation_for_single_message(history, this_bot)
+    current_message = format_conversation_for_single_message([request], this_bot)
+    condenser_prompt = CONDENSED_QUESTION_PROMPT.format_messages(
+        chat_history=chat_history,
+        current_message=current_message,
+    )
+    condenser_prompt = langchain_messages_to_openai(condenser_prompt)
+    condensed_question = await reliable_chat_completion(
+        model=FAST_GPT_MODEL,
+        temperature=0,
+        pl_tags=["question_condenser"],
+        messages=condenser_prompt,
+    )
+    return condensed_question
 
 
 def format_conversation_for_single_message(conversation: Iterable[MergedMessage], this_bot: MergedBot) -> str:

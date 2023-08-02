@@ -8,7 +8,7 @@ from langchain.schema import HumanMessage
 from copilot.code_extractors import extract_relevant_snippets
 from copilot.relevant_files import get_relevant_files
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.utils.history_processors import get_filtered_conversation
+from copilot.utils.history_processors import get_filtered_conversation, get_standalone_question
 from copilot.utils.misc import (
     SLOW_GPT_MODEL,
     bot_merger,
@@ -41,6 +41,7 @@ DIRECT_ANSWER_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
 
 @bot_merger.create_bot("DirectAnswerBot")
 async def direct_answer(context: SingleTurnContext) -> None:
+    await get_standalone_question(context.concluding_request, context.this_bot)
     conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
 
     relevant_files = await get_relevant_files(conversation, context.this_bot)
