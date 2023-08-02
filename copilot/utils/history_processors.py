@@ -36,9 +36,9 @@ CONDENSED_QUESTION_PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(
             """\
-Given the following conversation and a follow up question, rephrase the follow up question to be a standalone \
-question. Make sure to reflect what the user really wants. The user may sometimes be indirect in their follow up \
-input, so you need to derive the user's intention from the full conversation that you have.\
+Given the following conversation extract a standalone request that the user is trying to make to the AI assistant. \
+Make sure the standalone request that you generate contains all the necessary details. Also, try to make sure it \
+reflects what the user really wants (users may sometimes be somewhat indirect when they talk to AI assistants).\
 """
         ),
         HumanMessagePromptTemplate.from_template(
@@ -46,10 +46,6 @@ input, so you need to derive the user's intention from the full conversation tha
 # CHAT HISTORY
 
 {chat_history}
-
-# FOLLOW UP INPUT
-
-{current_message}
 
 # STANDALONE QUESTION
 
