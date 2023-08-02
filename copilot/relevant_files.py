@@ -49,7 +49,12 @@ INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json
 
 
 async def get_relevant_files(standalone_request: str) -> list[str]:
-    result = await openai.Embedding.acreate(input=[standalone_request], model=EMBEDDING_MODEL, temperature=0)
+    result = await openai.Embedding.acreate(
+        model=EMBEDDING_MODEL,
+        temperature=0,
+        pl_tags=["embedding"],
+        input=[standalone_request],
+    )
     embedding = result["data"][0]["embedding"]
     _, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 15)
 
