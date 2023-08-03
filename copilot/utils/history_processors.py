@@ -37,8 +37,9 @@ CONDENSED_QUESTION_PROMPT = ChatPromptTemplate.from_messages(
         SystemMessagePromptTemplate.from_template(
             """\
 Given the following conversation extract a standalone request that the user is trying to make to the AI assistant. \
-Make sure the standalone request that you generate contains all the necessary details. Also, try to make sure it \
-reflects what the user really wants (users may sometimes be somewhat indirect when they talk to AI assistants).\
+Make sure the standalone request that you generate contains all the necessary details. Try to make sure it \
+reflects what the user really wants (users may sometimes be somewhat indirect when they talk to AI assistants). \
+Also, if possible, please try to formulate the request in the form of a question.\
 """
         ),
         HumanMessagePromptTemplate.from_template(

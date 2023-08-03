@@ -34,11 +34,12 @@ conversation that you are currently having with the user. Each file has a number
 RELEVANT_FILES_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template("And here is a request from the user."),
-        HumanMessagePromptTemplate.from_template("USER: {user_request}"),
+        HumanMessagePromptTemplate.from_template("USER'S REQUEST: {user_request}"),
         SystemMessagePromptTemplate.from_template(
             """\
-Please select the numbers which correspond to the files that are relevant to the user's request. DO NOT EXPLAIN \
-ANYTHING, JUST LIST THE NUMBERS.\
+Please select the numbers which correspond to the files that are at least vaguely relevant to the user's request. \
+DO NOT EXPLAIN ANYTHING, JUST LIST THE NUMBERS. DO NOT EVEN CITE THE FILE PATHS THEMSELVES, YOUR OUTPUT SHOULD BE \
+NUMBERS ONLY.\
 """
         ),
     ]
@@ -76,5 +77,5 @@ async def get_relevant_files(standalone_request: str) -> list[str]:
         messages=prompt_openai,
     )
     file_numbers_to_keep = [int(n) for n in re.findall(r"\d+", completion)]
-    filtered_files = [msg for i, msg in enumerate(fetched_files, start=1) if i in file_numbers_to_keep]
+    filtered_files = [msg for i, msg in enumerate(fetched_files, start=1) if i <= 2 or i in file_numbers_to_keep][:4]
     return filtered_files

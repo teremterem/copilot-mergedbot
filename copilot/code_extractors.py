@@ -22,7 +22,7 @@ Here is the content of `{file_path}`, a file from the `{repo_name}` repo:\
         ),
         HumanMessagePromptTemplate.from_template("{file_content}"),
         SystemMessagePromptTemplate.from_template("And here is a request from the user."),
-        HumanMessagePromptTemplate.from_template("USER: {user_request}"),
+        HumanMessagePromptTemplate.from_template("USER'S REQUEST: {user_request}"),
         SystemMessagePromptTemplate.from_template(
             """\
 Repeat the content of the file `{file_path}` back verbatim, but omit parts that are fully irrelevant to the user's \

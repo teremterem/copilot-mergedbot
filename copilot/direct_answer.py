@@ -33,7 +33,12 @@ the conversation that you are currently having with the user.\
 DIRECT_ANSWER_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(
-            "Now, carry on with the conversation between you as an AI assistant and the user."
+            """\
+Now, carry on with the conversation between you as an AI assistant and the user.
+
+NOTE: If you decide to mention a file name (or names) in your response, make sure to include the full path (or \
+paths).\
+"""
         ),
     ]
 )
@@ -42,7 +47,6 @@ DIRECT_ANSWER_PROMPT_SUFFIX = ChatPromptTemplate.from_messages(
 @bot_merger.create_bot("DirectAnswerBot")
 async def direct_answer(context: SingleTurnContext) -> None:
     standalone_request = await get_standalone_request(context.concluding_request, context.this_bot)
-    conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
 
     relevant_files = await get_relevant_files(standalone_request)
     recalled_files_msg = "\n".join(f"{file}" for file in relevant_files)
@@ -52,11 +56,12 @@ async def direct_answer(context: SingleTurnContext) -> None:
     recalled_files = [
         # TODO run code snippet extractors in parallel
         HumanMessage(content=await extract_relevant_snippets(file, standalone_request))
-        for file in relevant_files[:3]  # TODO get rid of this limit ?
+        for file in relevant_files
     ]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
-
     prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_files, prompt_suffix))
+
+    conversation = await get_filtered_conversation(context.concluding_request, context.this_bot)
     prompt_openai.extend(
         {
             "role": get_openai_role_name(msg, context.this_bot),
