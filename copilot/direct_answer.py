@@ -49,14 +49,14 @@ paths).\
 async def direct_answer(context: SingleTurnContext) -> None:
     standalone_request = await request_condenser.bot.get_final_response(context.concluding_request)
 
-    relevant_files = await get_relevant_files(standalone_request)
+    relevant_files = await get_relevant_files(standalone_request.content)
     recalled_files_msg = "\n".join(f"{file}" for file in relevant_files)
     await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
     recalled_files = [
         # TODO run code snippet extractors in parallel
-        HumanMessage(content=await extract_relevant_snippets(file, standalone_request))
+        HumanMessage(content=await extract_relevant_snippets(file, standalone_request.content))
         for file in relevant_files
     ]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
