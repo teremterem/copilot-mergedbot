@@ -1,6 +1,6 @@
 # pylint: disable=no-name-in-module
 
-from botmerger import MergedMessage, MergedBot
+from botmerger import SingleTurnContext
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate
 
 from copilot.utils.misc import (
@@ -8,6 +8,8 @@ from copilot.utils.misc import (
     reliable_chat_completion,
     langchain_messages_to_openai,
     format_conversation_for_single_message,
+    bot_merger,
+    CHAT_HISTORY_MAX_LENGTH,
 )
 
 CONDENSED_QUESTION_PROMPT = ChatPromptTemplate.from_messages(
@@ -35,13 +37,16 @@ USER:\
 )
 
 
-async def get_standalone_request(request: MergedMessage, this_bot: MergedBot, history_max_length: int = 20) -> str:
-    conversation = await request.get_full_conversation(max_length=history_max_length)
+@bot_merger.create_bot("RequestCondenserBot")
+async def request_condenser(context: SingleTurnContext) -> None:
+    conversation = await context.get_full_conversation(max_length=CHAT_HISTORY_MAX_LENGTH)
 
     if len(conversation) < 2:
-        return request.content
+        await context.yield_final_response(context.concluding_request)
+        return
 
-    chat_history = format_conversation_for_single_message(conversation, this_bot)
+    # TODO how to make it more clear why `this_bot` is `context.concluding_request.receiver` in this particular case ?
+    chat_history = format_conversation_for_single_message(conversation, context.concluding_request.receiver)
     condenser_prompt = CONDENSED_QUESTION_PROMPT.format_messages(chat_history=chat_history)
     condenser_prompt = langchain_messages_to_openai(condenser_prompt)
     standalone_request = await reliable_chat_completion(
@@ -50,4 +55,4 @@ async def get_standalone_request(request: MergedMessage, this_bot: MergedBot, hi
         pl_tags=["question_condenser"],
         messages=condenser_prompt,
     )
-    return standalone_request
+    await context.yield_final_response(standalone_request)

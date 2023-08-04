@@ -8,7 +8,7 @@ from langchain.schema import HumanMessage
 from copilot.chat_history_filter import get_filtered_conversation
 from copilot.code_extractors import extract_relevant_snippets
 from copilot.relevant_files import get_relevant_files
-from copilot.request_condenser import get_standalone_request
+from copilot.request_condenser import request_condenser
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
 from copilot.utils.misc import (
     SLOW_GPT_MODEL,
@@ -47,7 +47,7 @@ paths).\
 
 @bot_merger.create_bot("DirectAnswerBot")
 async def direct_answer(context: SingleTurnContext) -> None:
-    standalone_request = await get_standalone_request(context.concluding_request, context.this_bot)
+    standalone_request = await request_condenser.bot.get_final_response(context.concluding_request)
 
     relevant_files = await get_relevant_files(standalone_request)
     recalled_files_msg = "\n".join(f"{file}" for file in relevant_files)
