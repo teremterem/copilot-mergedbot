@@ -1,6 +1,6 @@
 from botmerger import SingleTurnContext
 
-from copilot.utils.history_processors import get_filtered_conversation
+from copilot.chat_history_filter import get_filtered_conversation
 from copilot.utils.misc import bot_merger, FAST_GPT_MODEL, reliable_chat_completion, get_openai_role_name
 
 
