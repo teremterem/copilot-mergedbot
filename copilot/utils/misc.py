@@ -34,3 +34,10 @@ async def reliable_chat_completion(**kwargs) -> str:
     if completion.finish_reason != "stop":
         raise RuntimeError(f"Incomplete chat completion (finish_reason: {completion.finish_reason})")
     return completion.message.content
+
+
+def format_conversation_for_single_message(conversation: Iterable[MergedMessage], this_bot: MergedBot) -> str:
+    conversation_str = "\n\n".join(
+        f"" f"{get_openai_role_name(msg, this_bot).upper()}: {msg.content}" for msg in conversation
+    )
+    return conversation_str

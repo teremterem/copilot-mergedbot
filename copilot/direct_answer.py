@@ -5,10 +5,11 @@ from botmerger import SingleTurnContext
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain.schema import HumanMessage
 
+from copilot.chat_history_filter import get_filtered_conversation
 from copilot.code_extractors import extract_relevant_snippets
 from copilot.relevant_files import get_relevant_files
+from copilot.request_condenser import get_standalone_request
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
-from copilot.chat_history_filter import get_filtered_conversation, get_standalone_request
 from copilot.utils.misc import (
     SLOW_GPT_MODEL,
     bot_merger,
