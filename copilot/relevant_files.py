@@ -90,16 +90,15 @@ async def relevant_files(context: SingleTurnContext) -> None:
     file_numbers_to_keep = [int(n) for n in re.findall(r"\d+", completion)]
 
     # TODO make the code below less ugly ?
-    responses_so_far = 0
+    num_of_responses = 0
     for i, msg in enumerate(file_explanations, start=1):
         if i > 1 and i not in file_numbers_to_keep:
             # the file is neither the first one in the similarity list nor it was chosen by the LLM explicitly
             continue
 
-        if responses_so_far > 1:
+        num_of_responses += 1
+        if num_of_responses > 1:
             await context.yield_final_response(msg["explanation"], extra_fields={"file": msg["file"]})
             # we are returning no more than 2 files
             return
-
         await context.yield_interim_response(msg["explanation"], extra_fields={"file": msg["file"]})
-        responses_so_far += 1
