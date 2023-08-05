@@ -63,5 +63,5 @@ async def chat_history_filter(context: SingleTurnContext) -> None:
         message_numbers_to_keep = [int(n) for n in re.findall(r"\d+", message_numbers_to_keep)]
         history = [msg for i, msg in enumerate(history, start=1) if i in message_numbers_to_keep]
 
-    yield context.yield_from(history, still_thinking=True)
-    yield context.yield_final_response(request)
+    await context.yield_from(history, still_thinking=True)
+    await context.yield_final_response(request)
