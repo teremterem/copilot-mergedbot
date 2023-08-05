@@ -3,6 +3,7 @@ import itertools
 
 from botmerger import SingleTurnContext, BotResponses
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
+from langchain.schema import HumanMessage
 
 from copilot.chat_history_filter import chat_history_filter
 from copilot.code_extractors import extract_snippets
@@ -59,7 +60,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
         )
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
-    recalled_snippets = [(await promise.get_final_response()).content for promise in promises]
+    recalled_snippets = [HumanMessage(content=(await promise.get_final_response()).content) for promise in promises]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
     prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_snippets, prompt_suffix))
 
