@@ -47,13 +47,12 @@ paths).\
 
 @bot_merger.create_bot("DirectAnswerBot")
 async def direct_answer(context: SingleTurnContext) -> None:
-    standalone_request = await request_condenser.bot.get_final_response(context.concluding_request)
-
-    relevant_file_messages = await relevant_files.bot.get_all_responses(standalone_request.content)
+    relevant_file_messages = await relevant_files.bot.get_all_responses(context.concluding_request)
     recalled_files_msg = "\n".join(file_msg.extra_fields["file"] for file_msg in relevant_file_messages)
     await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
+    standalone_request = await request_condenser.bot.get_final_response(context.concluding_request)
     recalled_files = [
         # TODO run code snippet extractors in parallel
         HumanMessage(
