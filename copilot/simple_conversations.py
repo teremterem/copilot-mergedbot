@@ -1,17 +1,18 @@
 from botmerger import SingleTurnContext
 
-from copilot.chat_history_filter import get_filtered_conversation
+from copilot.chat_history_filter import chat_history_filter
 from copilot.utils.misc import bot_merger, FAST_GPT_MODEL, reliable_chat_completion, get_openai_role_name
 
 
 @bot_merger.create_bot("SimpleConversationBot")
 async def simple_conversation(context: SingleTurnContext) -> None:
+    conversation = await chat_history_filter.bot.get_all_responses(context.concluding_request)
     conversation = [
         {
-            "role": get_openai_role_name(msg, context.this_bot),
+            "role": get_openai_role_name(msg.original_message, context.this_bot),
             "content": msg.content,
         }
-        for msg in await get_filtered_conversation(context.concluding_request, context.this_bot)
+        for msg in conversation
     ]
     completion = await reliable_chat_completion(
         model=FAST_GPT_MODEL,

@@ -7,7 +7,7 @@ from langchain.schema import HumanMessage
 
 from copilot.chat_history_filter import chat_history_filter
 from copilot.code_extractors import extract_relevant_snippets
-from copilot.relevant_files import get_relevant_files
+from copilot.relevant_files import relevant_files
 from copilot.request_condenser import request_condenser
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
 from copilot.utils.misc import (
@@ -49,15 +49,17 @@ paths).\
 async def direct_answer(context: SingleTurnContext) -> None:
     standalone_request = await request_condenser.bot.get_final_response(context.concluding_request)
 
-    relevant_files = await get_relevant_files(standalone_request.content)
-    recalled_files_msg = "\n".join(f"{file}" for file in relevant_files)
+    relevant_file_messages = await relevant_files.bot.get_all_responses(standalone_request.content)
+    recalled_files_msg = "\n".join(file_msg.extra_fields["file"] for file_msg in relevant_file_messages)
     await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
     recalled_files = [
         # TODO run code snippet extractors in parallel
-        HumanMessage(content=await extract_relevant_snippets(file, standalone_request.content))
-        for file in relevant_files
+        HumanMessage(
+            content=await extract_relevant_snippets(file_msg.extra_fields["file"], standalone_request.content)
+        )
+        for file_msg in relevant_file_messages
     ]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
     prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_files, prompt_suffix))
