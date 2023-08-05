@@ -39,7 +39,10 @@ USER:\
 
 @bot_merger.create_bot("RequestCondenserBot")
 async def request_condenser(context: SingleTurnContext) -> None:
-    conversation = await context.get_full_conversation(max_length=CHAT_HISTORY_MAX_LENGTH)
+    # TODO is relying on `original_message` to get the full conversation a good idea ?
+    conversation = await context.concluding_request.original_message.get_full_conversation(
+        max_length=CHAT_HISTORY_MAX_LENGTH
+    )
 
     if len(conversation) < 2:
         await context.yield_final_response(context.concluding_request)
