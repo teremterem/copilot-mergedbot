@@ -40,16 +40,15 @@ USER:\
 @bot_merger.create_bot("RequestCondenserBot")
 async def request_condenser(context: SingleTurnContext) -> None:
     # TODO is relying on `original_message` to get the full conversation a good idea ?
-    conversation = await context.concluding_request.original_message.get_full_conversation(
-        max_length=CHAT_HISTORY_MAX_LENGTH
-    )
+    request = context.concluding_request.original_message
+    conversation = await request.get_full_conversation(max_length=CHAT_HISTORY_MAX_LENGTH)
 
     if len(conversation) < 2:
         await context.yield_final_response(context.concluding_request)
         return
 
-    # TODO how to make it more clear why `this_bot` is `context.concluding_request.receiver` in this particular case ?
-    chat_history = format_conversation_for_single_message(conversation, context.concluding_request.receiver)
+    # TODO why `this_bot` is `context.concluding_request.original_message.receiver` in this particular case ?
+    chat_history = format_conversation_for_single_message(conversation, request.receiver)
     condenser_prompt = CONDENSED_QUESTION_PROMPT.format_messages(chat_history=chat_history)
     condenser_prompt = langchain_messages_to_openai(condenser_prompt)
     standalone_request = await reliable_chat_completion(
