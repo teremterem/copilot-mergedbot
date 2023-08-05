@@ -53,13 +53,13 @@ async def direct_answer(context: SingleTurnContext) -> None:
     promises: list[BotResponses] = []
     for file_msg in relevant_file_messages:
         promises.append(
-            await extract_snippets.trigger(
+            await extract_snippets.bot.trigger(
                 context.concluding_request, extra_fields={"file": file_msg.extra_fields["file"]}
             )
         )
 
     prompt_prefix = DIRECT_ANSWER_PROMPT_PREFIX.format_messages(repo_name=REPO_PATH_IN_QUESTION.name)
-    recalled_snippets = [await promise.get_final_response() for promise in promises]
+    recalled_snippets = [(await promise.get_final_response()).content for promise in promises]
     prompt_suffix = DIRECT_ANSWER_PROMPT_SUFFIX.format_messages()
     prompt_openai = langchain_messages_to_openai(itertools.chain(prompt_prefix, recalled_snippets, prompt_suffix))
 
