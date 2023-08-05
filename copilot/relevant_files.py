@@ -57,7 +57,7 @@ async def get_relevant_files(standalone_request: str) -> list[str]:
         input=[standalone_request],
     )
     embedding = result["data"][0]["embedding"]
-    _, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 15)
+    _, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 5)
 
     fetched_files = [INDEXED_EXPL_FILES[idx] for idx in indices[0]]
 
