@@ -54,7 +54,7 @@ async def direct_answer(context: SingleTurnContext) -> None:
     promises: list[BotResponses] = []
     for file_msg in relevant_file_messages:
         promises.append(
-            await extract_snippets.bot.trigger(
+            extract_snippets.bot.trigger(
                 context.concluding_request, extra_fields={"file": file_msg.extra_fields["file"]}
             )
         )
