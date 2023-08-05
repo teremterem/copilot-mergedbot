@@ -77,5 +77,5 @@ async def get_relevant_files(standalone_request: str) -> list[str]:
         messages=prompt_openai,
     )
     file_numbers_to_keep = [int(n) for n in re.findall(r"\d+", completion)]
-    filtered_files = [msg for i, msg in enumerate(fetched_files, start=1) if i <= 2 or i in file_numbers_to_keep][:4]
+    filtered_files = [msg for i, msg in enumerate(fetched_files, start=1) if i <= 1 or i in file_numbers_to_keep][:2]
     return filtered_files
