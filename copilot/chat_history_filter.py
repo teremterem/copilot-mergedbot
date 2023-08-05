@@ -1,7 +1,7 @@
 # pylint: disable=no-name-in-module
 import re
 
-from botmerger import MergedMessage, MergedBot
+from botmerger import SingleTurnContext
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate
 
 from copilot.utils.misc import (
@@ -9,6 +9,8 @@ from copilot.utils.misc import (
     reliable_chat_completion,
     langchain_messages_to_openai,
     get_openai_role_name,
+    bot_merger,
+    CHAT_HISTORY_MAX_LENGTH,
 )
 
 CHAT_HISTORY_FILTER_PROMPT = ChatPromptTemplate.from_messages(
@@ -31,18 +33,22 @@ kept. DO NOT EXPLAIN ANYTHING, JUST LIST THE NUMBERS.\
 )
 
 
-async def get_filtered_conversation(
-    request: MergedMessage, this_bot: MergedBot, include_request: bool = True, history_max_length: int = 20
-) -> list[MergedMessage]:
-    history = await request.get_conversation_history(max_length=history_max_length)
+@bot_merger.create_bot("ChatHistoryFilterBot")
+async def chat_history_filter(context: SingleTurnContext) -> None:
+    request = context.concluding_request.original_message
+    assistant_in_question = request.receiver
+
+    history = await request.get_conversation_history(max_length=CHAT_HISTORY_MAX_LENGTH)
 
     if history:
         chat_history_parts = [
-            f"[{i}] {get_openai_role_name(msg, this_bot).upper()}: {msg.content}"
+            f"[{i}] {get_openai_role_name(msg, assistant_in_question).upper()}: {msg.content}"
             for i, msg in enumerate(history, start=1)
         ]
         chat_history = "\n\n".join(chat_history_parts)
-        current_message = f"[CURRENT] {get_openai_role_name(request, this_bot).upper()}: {request.content}"
+        current_message = (
+            f"[CURRENT] {get_openai_role_name(request, assistant_in_question).upper()}: {request.content}"
+        )
         filter_prompt = CHAT_HISTORY_FILTER_PROMPT.format_messages(
             chat_history=chat_history,
             current_message=current_message,
@@ -57,6 +63,5 @@ async def get_filtered_conversation(
         message_numbers_to_keep = [int(n) for n in re.findall(r"\d+", message_numbers_to_keep)]
         history = [msg for i, msg in enumerate(history, start=1) if i in message_numbers_to_keep]
 
-    if include_request:
-        history.append(request)
-    return history
+    yield context.yield_from(history, still_thinking=True)
+    yield context.yield_final_response(request)
