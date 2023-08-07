@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Iterable
 
-from botmerger import InMemoryBotMerger, MergedMessage, MergedBot
+from botmerger import InMemoryBotMerger, MergedMessage, MergedParticipant
 from langchain.chat_models.openai import _convert_message_to_dict
 from langchain.schema import BaseMessage
 
@@ -10,10 +10,12 @@ FAST_LONG_GPT_MODEL = "gpt-3.5-turbo-16k-0613"
 SLOW_GPT_MODEL = "gpt-4-0613"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
+CHAT_HISTORY_MAX_LENGTH = 20
+
 bot_merger = InMemoryBotMerger()
 
 
-def get_openai_role_name(message: MergedMessage, this_bot: MergedBot) -> str:
+def get_openai_role_name(message: MergedMessage, this_bot: MergedParticipant) -> str:
     return "assistant" if message.sender == this_bot else "user"
 
 
@@ -34,3 +36,10 @@ async def reliable_chat_completion(**kwargs) -> str:
     if completion.finish_reason != "stop":
         raise RuntimeError(f"Incomplete chat completion (finish_reason: {completion.finish_reason})")
     return completion.message.content
+
+
+def format_conversation_for_single_message(conversation: Iterable[MergedMessage], this_bot: MergedParticipant) -> str:
+    conversation_str = "\n\n".join(
+        f"" f"{get_openai_role_name(msg, this_bot).upper()}: {msg.content}" for msg in conversation
+    )
+    return conversation_str

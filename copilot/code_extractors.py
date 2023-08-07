@@ -1,13 +1,16 @@
 # pylint: disable=no-name-in-module
 from pathlib import Path
 
+from botmerger import SingleTurnContext
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate
 
+from copilot.request_condenser import request_condenser
 from copilot.specific_repo import REPO_PATH_IN_QUESTION
 from copilot.utils.misc import (
     reliable_chat_completion,
     langchain_messages_to_openai,
     FAST_LONG_GPT_MODEL,
+    bot_merger,
 )
 
 FILE_SNIPPETS_PROMPT = ChatPromptTemplate.from_messages(
@@ -38,15 +41,18 @@ If nothing in this file is relevant to the user's request at all then output jus
 )
 
 
-async def extract_relevant_snippets(file: Path | str, standalone_request: str) -> str:
-    if not isinstance(file, Path):
-        file = Path(file)
+@bot_merger.create_bot("ExtractSnippetsBot")
+async def extract_snippets(context: SingleTurnContext) -> None:
+    file = Path(context.concluding_request.extra_fields["file"])
+    request = context.concluding_request.original_message
+
+    standalone_request = await request_condenser.bot.get_final_response(request)
 
     messages = FILE_SNIPPETS_PROMPT.format_messages(
         repo_name=REPO_PATH_IN_QUESTION.name,
         file_path=file,
         file_content=(REPO_PATH_IN_QUESTION / file).read_text(encoding="utf-8"),
-        user_request=standalone_request,
+        user_request=standalone_request.content,
     )
     messages = langchain_messages_to_openai(messages)
 
@@ -56,4 +62,4 @@ async def extract_relevant_snippets(file: Path | str, standalone_request: str) -
         pl_tags=["extract_snippets"],
         messages=messages,
     )
-    return f"FILE: {file.as_posix()}\n\n{completion}"
+    await context.yield_final_response(f"FILE: {file.as_posix()}\n\n{completion}")
