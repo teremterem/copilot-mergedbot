@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Iterable
 
-from botmerger import InMemoryBotMerger, MergedMessage, MergedParticipant
+from botmerger import MergedMessage, MergedParticipant, YamlLogBotMerger
 from langchain.chat_models.openai import _convert_message_to_dict
 from langchain.schema import BaseMessage
 
@@ -12,7 +12,7 @@ EMBEDDING_MODEL = "text-embedding-ada-002"
 
 CHAT_HISTORY_MAX_LENGTH = 20
 
-bot_merger = InMemoryBotMerger()
+bot_merger = YamlLogBotMerger(Path(__file__).parents[2] / "merged_log.yaml")
 
 
 def get_openai_role_name(message: MergedMessage, this_bot: MergedParticipant) -> str:
