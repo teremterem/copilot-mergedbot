@@ -53,6 +53,8 @@ async def direct_answer(context: SingleTurnContext) -> None:
 
     promises: list[BotResponses] = []
     for file_msg in relevant_file_messages:
+        # TODO investigate what kind of race conditions are possible here with respect to the chat history
+        #  between the two bots
         promises.append(
             extract_snippets.bot.trigger(
                 context.concluding_request, extra_fields={"file": file_msg.extra_fields["file"]}
