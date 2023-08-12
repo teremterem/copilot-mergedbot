@@ -45,7 +45,7 @@ async def request_condenser(context: SingleTurnContext) -> None:
     conversation = await request.get_full_conversation(max_length=CHAT_HISTORY_MAX_LENGTH)
 
     if len(conversation) < 2:
-        await context.yield_final_response(context.concluding_request)
+        await context.yield_final_response(request)
         return
 
     chat_history = format_conversation_for_single_message(conversation, assistant_in_question)
