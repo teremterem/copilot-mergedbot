@@ -41,7 +41,7 @@ If nothing in this file is relevant to the user's request at all then output jus
 )
 
 
-@bot_merger.create_bot("ExtractSnippetsBot")
+@bot_merger.create_bot
 async def extract_snippets(context: SingleTurnContext) -> None:
     file = Path(context.concluding_request.extra_fields["file"])
     request = context.concluding_request.original_message

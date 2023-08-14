@@ -44,15 +44,17 @@ paths).\
 )
 
 
-@bot_merger.create_bot("DirectAnswerBot")
+@bot_merger.create_bot
 async def direct_answer(context: SingleTurnContext) -> None:
     relevant_file_messages = await relevant_files.bot.get_all_responses(context.concluding_request)
 
     recalled_files_msg = "\n".join(file_msg.extra_fields["file"] for file_msg in relevant_file_messages)
-    await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", invisible_to_bots=True)
+    await context.yield_interim_response(f"```\n{recalled_files_msg}\n```", hidden_from_history=True)
 
     promises: list[BotResponses] = []
     for file_msg in relevant_file_messages:
+        # TODO investigate what kind of race conditions are possible here with respect to the chat history
+        #  between the two bots
         promises.append(
             extract_snippets.bot.trigger(
                 context.concluding_request, extra_fields={"file": file_msg.extra_fields["file"]}

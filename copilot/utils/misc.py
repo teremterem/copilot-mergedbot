@@ -1,18 +1,21 @@
 from pathlib import Path
 from typing import Iterable
 
-from botmerger import InMemoryBotMerger, MergedMessage, MergedParticipant
+from botmerger import MergedMessage, MergedParticipant, YamlLogBotMerger
 from langchain.chat_models.openai import _convert_message_to_dict
 from langchain.schema import BaseMessage
 
 FAST_GPT_MODEL = "gpt-3.5-turbo-0613"
-FAST_LONG_GPT_MODEL = "gpt-3.5-turbo-16k-0613"
-SLOW_GPT_MODEL = "gpt-4-0613"
+# TODO revert back to more powerful models
+FAST_LONG_GPT_MODEL = FAST_GPT_MODEL
+SLOW_GPT_MODEL = FAST_GPT_MODEL
+# FAST_LONG_GPT_MODEL = "gpt-3.5-turbo-16k-0613"
+# SLOW_GPT_MODEL = "gpt-4-0613"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 CHAT_HISTORY_MAX_LENGTH = 20
 
-bot_merger = InMemoryBotMerger()
+bot_merger = YamlLogBotMerger(Path(__file__).parents[2] / "merged_log.yaml")
 
 
 def get_openai_role_name(message: MergedMessage, this_bot: MergedParticipant) -> str:
