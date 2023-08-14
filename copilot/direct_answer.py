@@ -44,7 +44,7 @@ paths).\
 )
 
 
-@bot_merger.create_bot("DirectAnswerBot")
+@bot_merger.create_bot
 async def direct_answer(context: SingleTurnContext) -> None:
     relevant_file_messages = await relevant_files.bot.get_all_responses(context.concluding_request)
 

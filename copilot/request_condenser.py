@@ -37,7 +37,7 @@ USER:\
 )
 
 
-@bot_merger.create_bot("RequestCondenserBot")
+@bot_merger.create_bot
 async def request_condenser(context: SingleTurnContext) -> None:
     request = context.concluding_request.original_message
     assistant_in_question = request.receiver

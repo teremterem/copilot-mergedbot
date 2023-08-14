@@ -4,7 +4,7 @@ from copilot.chat_history_filter import chat_history_filter
 from copilot.utils.misc import bot_merger, FAST_GPT_MODEL, reliable_chat_completion, get_openai_role_name
 
 
-@bot_merger.create_bot("SimpleConversationBot")
+@bot_merger.create_bot
 async def simple_conversation(context: SingleTurnContext) -> None:
     conversation = await chat_history_filter.bot.get_all_responses(context.concluding_request)
     conversation = [

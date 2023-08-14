@@ -33,7 +33,7 @@ kept. DO NOT EXPLAIN ANYTHING, JUST LIST THE NUMBERS.\
 )
 
 
-@bot_merger.create_bot("ChatHistoryFilterBot")
+@bot_merger.create_bot
 async def chat_history_filter(context: SingleTurnContext) -> None:
     request = context.concluding_request.original_message
     assistant_in_question = request.receiver

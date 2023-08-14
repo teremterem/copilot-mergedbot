@@ -92,7 +92,7 @@ EXPLANATIONS_FAISS = faiss.read_index(str(REPO_PATH_IN_QUESTION / "explanations.
 INDEXED_EXPL_FILES = json.loads((REPO_PATH_IN_QUESTION / "explanation_files.json").read_text(encoding="utf-8"))
 
 
-@bot_merger.create_bot("ReWOO")
+@bot_merger.create_bot
 async def rewoo(context: SingleTurnContext) -> None:
     # pylint: disable=too-many-locals
     user_request = context.concluding_request.content
