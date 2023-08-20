@@ -19,6 +19,8 @@ from copilot.utils.misc import (
     reliable_chat_completion,
     FAST_GPT_MODEL,
     bot_merger,
+    NUM_OF_COSINE_SIM_FILES,
+    TOTAL_NUM_OF_RELEVANT_FILES,
 )
 
 RELEVANT_FILES_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
@@ -92,12 +94,12 @@ async def relevant_files(context: SingleTurnContext) -> None:
     # TODO make the code below less ugly ?
     num_of_responses = 0
     for i, msg in enumerate(file_explanations, start=1):
-        if i > 1 and i not in file_numbers_to_keep:
+        if i > NUM_OF_COSINE_SIM_FILES and i not in file_numbers_to_keep:
             # the file is neither the first one in the similarity list nor it was chosen by the LLM explicitly
             continue
 
         num_of_responses += 1
-        if num_of_responses > 1:
+        if num_of_responses > TOTAL_NUM_OF_RELEVANT_FILES:
             await context.yield_final_response(msg["explanation"], extra_fields={"file": msg["file"]})
             # we are returning no more than 2 files
             return
