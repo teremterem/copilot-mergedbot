@@ -1,0 +1,743 @@
+_type: MergedBot
+alias: chat_history_filter
+uuid: bb26ef49-45b2-43a6-a37e-72b6adc95120
+
+---
+
+_type: MergedBot
+alias: request_condenser
+uuid: 38a4f0f3-ae4c-41ac-917b-2c4df77634ab
+
+---
+
+_type: MergedBot
+alias: extract_snippets
+uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+
+---
+
+_type: MergedBot
+alias: relevant_files
+uuid: 82b139ae-e244-4544-9c85-ef85ab1f8a85
+
+---
+
+_type: MergedBot
+alias: direct_answer
+uuid: 25583c39-63ae-43bd-8763-a37c01141081
+
+---
+
+_type: MergedBot
+alias: replay_bot
+uuid: 238396f3-b402-40f6-b2b8-47fbd2c032e7
+
+---
+
+_type: MergedUser
+name: teremterem
+uuid: 82a5e668-573b-47db-b8a1-13a7e347db64
+
+---
+
+_type: OriginalMessage
+content: teremterem's channel
+extra_fields:
+    channel_id: 1104419843991674900
+    channel_type: discord
+receiver:
+    human_name: teremterem
+    uuid: 82a5e668-573b-47db-b8a1-13a7e347db64
+sender:
+    human_name: teremterem
+    uuid: 82a5e668-573b-47db-b8a1-13a7e347db64
+uuid: f96cea80-420a-4db5-82bf-f7dd61273e58
+
+---
+
+_type: OriginalMessage
+content: '# LangChain Chroma - load data from Vector Database
+
+
+    I have written LangChain code using Chroma DB to vector store the data from a
+    website url. It currently works to get the data from the URL, store it into the
+    project folder and then use that data to respond to a user prompt. I figured out
+    how to make that data persist/be stored after the run, but I can''t figure out
+    how to then load that data for future prompts. The goal is a user input is received,
+    and the program using OpenAI LLM will generate a response based on the existing
+    database files, as opposed to the program needing to create/write those database
+    files on each run. How can this be done?
+
+
+    What should I do?
+
+
+    I tried this as this would likely be the ideal solution:
+
+    ```
+
+    vectordb = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+
+    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", vectorstore=vectordb)
+
+    ```
+
+    But the `from_chain_type()` function doesn''t take a `vectorstore` db as an input,
+    so therefore this doesn''t work.'
+parent_context:
+    preview: teremterem's channel
+    uuid: f96cea80-420a-4db5-82bf-f7dd61273e58
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+sender:
+    human_name: teremterem
+    uuid: 82a5e668-573b-47db-b8a1-13a7e347db64
+uuid: 87ae641e-c4cc-433a-8599-72471346014d
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+receiver:
+    bot_alias: relevant_files
+    uuid: 82b139ae-e244-4544-9c85-ef85ab1f8a85
+sender:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+uuid: 94715a25-2dc3-4d52-8d11-d803811e7414
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 94715a25-2dc3-4d52-8d11-d803811e7414
+receiver:
+    bot_alias: request_condenser
+    uuid: 38a4f0f3-ae4c-41ac-917b-2c4df77634ab
+sender:
+    bot_alias: relevant_files
+    uuid: 82b139ae-e244-4544-9c85-ef85ab1f8a85
+uuid: e83a3703-fc4d-44b4-8e57-6bf0d6a9fcb0
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 94715a25-2dc3-4d52-8d11-d803811e7414
+previous_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: e83a3703-fc4d-44b4-8e57-6bf0d6a9fcb0
+receiver:
+    bot_alias: relevant_files
+    uuid: 82b139ae-e244-4544-9c85-ef85ab1f8a85
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: e83a3703-fc4d-44b4-8e57-6bf0d6a9fcb0
+sender:
+    bot_alias: request_condenser
+    uuid: 38a4f0f3-ae4c-41ac-917b-2c4df77634ab
+uuid: e7f17761-c777-4181-ac8b-d8340d29650c
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/vectorstores/chroma.py
+
+
+    This file is a wrapper around the ChromaDB embeddings platform. It provides a
+    class called `Chroma` that acts as a vector store for storing and querying document
+    embeddings. The `Chroma` class allows you to add documents to the vector store,
+    perform similarity searches, and delete documents. It also supports the use of
+    an embedding function to generate embeddings for the documents.
+
+
+    The `Chroma` class uses the `chromadb` package to interact with the ChromaDB platform.
+    It initializes a Chroma client and creates a collection to store the documents.
+    The collection can be persisted to disk if a persist directory is specified.
+
+
+    The `Chroma` class provides methods for adding documents to the collection, performing
+    similarity searches based on text or vector embeddings, and deleting documents
+    from the collection. It also supports the retrieval of documents based on their
+    IDs or metadata.
+
+
+    Additionally, the `Chroma` class includes methods for performing similarity searches
+    using the Maximal Marginal Relevance (MMR) algorithm, which aims to select documents
+    that are both similar to a query and diverse among themselves.
+
+
+    Overall, this file provides a convenient interface for working with the ChromaDB
+    embeddings platform and performing various operations on document embeddings.'
+extra_fields:
+    file: libs/langchain/langchain/vectorstores/chroma.py
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 94715a25-2dc3-4d52-8d11-d803811e7414
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 94715a25-2dc3-4d52-8d11-d803811e7414
+sender:
+    bot_alias: relevant_files
+    uuid: 82b139ae-e244-4544-9c85-ef85ab1f8a85
+still_thinking: true
+uuid: 02062c12-7635-4294-8af2-3428a0442c25
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/tools/vectorstore/__init__.py
+
+
+    This file is a simple tool that acts as a wrapper around the VectorDBQA chain.
+    It provides a convenient interface to interact with the VectorDBQA chain and perform
+    various operations.'
+extra_fields:
+    file: libs/langchain/langchain/tools/vectorstore/__init__.py
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/vectorstores/chroma.py This file is ...'
+    uuid: 02062c12-7635-4294-8af2-3428a0442c25
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 94715a25-2dc3-4d52-8d11-d803811e7414
+sender:
+    bot_alias: relevant_files
+    uuid: 82b139ae-e244-4544-9c85-ef85ab1f8a85
+still_thinking: true
+uuid: 6a2899ab-1a65-4af1-a972-3522e5789928
+
+---
+
+_type: OriginalMessage
+content: "FILE: libs/langchain/langchain/chains/chat_vector_db/prompts.py\n\nThis\
+    \ file contains two prompt templates used in the LangChain project. \n\nThe first\
+    \ template, `CONDENSE_QUESTION_PROMPT`, is used to rephrase a follow-up question\
+    \ from a given conversation to make it a standalone question. It takes the chat\
+    \ history and the follow-up question as input and generates a prompt with the\
+    \ rephrased standalone question.\n\nThe second template, `QA_PROMPT`, is used\
+    \ to generate prompts for answering questions based on given context. It takes\
+    \ the context and the question as input and generates a prompt asking for a helpful\
+    \ answer. If the answer is not known, it instructs the user to simply state that\
+    \ they don't know instead of making up an answer."
+extra_fields:
+    file: libs/langchain/langchain/chains/chat_vector_db/prompts.py
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/tools/vectorstore/__init__.py This f...'
+    uuid: 6a2899ab-1a65-4af1-a972-3522e5789928
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 94715a25-2dc3-4d52-8d11-d803811e7414
+sender:
+    bot_alias: relevant_files
+    uuid: 82b139ae-e244-4544-9c85-ef85ab1f8a85
+still_thinking: true
+uuid: 8c8201f9-f6f6-42b8-88d0-f3f08700a5d6
+
+---
+
+_type: OriginalMessage
+content: '```
+
+    libs/langchain/langchain/vectorstores/chroma.py
+
+    libs/langchain/langchain/tools/vectorstore/__init__.py
+
+    libs/langchain/langchain/chains/chat_vector_db/prompts.py
+
+    ```'
+hidden_from_history: true
+parent_context:
+    preview: teremterem's channel
+    uuid: f96cea80-420a-4db5-82bf-f7dd61273e58
+previous_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+receiver:
+    human_name: teremterem
+    uuid: 82a5e668-573b-47db-b8a1-13a7e347db64
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+sender:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+still_thinking: true
+uuid: 51377981-2353-4048-815c-7ef380e1adac
+
+---
+
+_type: ForwardedMessage
+extra_fields:
+    file: libs/langchain/langchain/vectorstores/chroma.py
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+receiver:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+sender:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+uuid: f7d3d73b-9a7c-47e6-9b84-140055db4a5e
+
+---
+
+_type: ForwardedMessage
+extra_fields:
+    file: libs/langchain/langchain/tools/vectorstore/__init__.py
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: f7d3d73b-9a7c-47e6-9b84-140055db4a5e
+receiver:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+sender:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+uuid: f4a5c9eb-6616-4490-9472-957eb531cd23
+
+---
+
+_type: ForwardedMessage
+extra_fields:
+    file: libs/langchain/langchain/chains/chat_vector_db/prompts.py
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: f4a5c9eb-6616-4490-9472-957eb531cd23
+receiver:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+sender:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+uuid: 9bf30e8f-fcd6-45d7-b818-81db791bf21d
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: f7d3d73b-9a7c-47e6-9b84-140055db4a5e
+receiver:
+    bot_alias: request_condenser
+    uuid: 38a4f0f3-ae4c-41ac-917b-2c4df77634ab
+sender:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+uuid: 4c939fc5-5aac-4fae-beed-f54c60e011e0
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: f4a5c9eb-6616-4490-9472-957eb531cd23
+receiver:
+    bot_alias: request_condenser
+    uuid: 38a4f0f3-ae4c-41ac-917b-2c4df77634ab
+sender:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+uuid: a18b1258-de52-4b90-a675-6ecf5d3d838d
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 9bf30e8f-fcd6-45d7-b818-81db791bf21d
+receiver:
+    bot_alias: request_condenser
+    uuid: 38a4f0f3-ae4c-41ac-917b-2c4df77634ab
+sender:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+uuid: e4be42d2-30d8-479b-854f-7d0be63860c0
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/tools/vectorstore/__init__.py
+
+
+    """Simple tool wrapper around VectorDBQA chain."""'
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 9bf30e8f-fcd6-45d7-b818-81db791bf21d
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: f4a5c9eb-6616-4490-9472-957eb531cd23
+sender:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+uuid: bc13d185-35a4-42be-8508-a812d7672c2e
+
+---
+
+_type: OriginalMessage
+content: "FILE: libs/langchain/langchain/chains/chat_vector_db/prompts.py\n\n# flake8:\
+    \ noqa\nfrom langchain.prompts.prompt import PromptTemplate\n\n_template = \"\"\
+    \"Given the following conversation and a follow up question, rephrase the follow\
+    \ up question to be a standalone question.\n\nChat History:\n{chat_history}\n\
+    Follow Up Input: {question}\nStandalone question:\"\"\"\nCONDENSE_QUESTION_PROMPT\
+    \ = PromptTemplate.from_template(_template)\n\nprompt_template = \"\"\"Use the\
+    \ following pieces of context to answer the question at the end. If you don't\
+    \ know the answer, just say that you don't know, don't try to make up an answer.\n\
+    \n{context}\n\nQuestion: {question}\nHelpful Answer:\"\"\"\nQA_PROMPT = PromptTemplate(\n\
+    \    template=prompt_template, input_variables=[\"context\", \"question\"]\n)"
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/tools/vectorstore/__init__.py """Sim...'
+    uuid: bc13d185-35a4-42be-8508-a812d7672c2e
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 9bf30e8f-fcd6-45d7-b818-81db791bf21d
+sender:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+uuid: 120c845c-cab5-4eaa-923c-bf81b8f9ea5f
+
+---
+
+_type: OriginalMessage
+content: "FILE: libs/langchain/langchain/vectorstores/chroma.py\n\n```python\n\"\"\
+    \"Wrapper around ChromaDB embeddings platform.\"\"\"\nfrom __future__ import annotations\n\
+    \nimport logging\nimport uuid\nfrom typing import (\n    TYPE_CHECKING,\n    Any,\n\
+    \    Callable,\n    Dict,\n    Iterable,\n    List,\n    Optional,\n    Tuple,\n\
+    \    Type,\n)\n\nimport numpy as np\n\nfrom langchain.docstore.document import\
+    \ Document\nfrom langchain.embeddings.base import Embeddings\nfrom langchain.vectorstores.base\
+    \ import VectorStore\n\nif TYPE_CHECKING:\n    import chromadb\n    import chromadb.config\n\
+    \    from chromadb.api.types import ID, OneOrMany, Where, WhereDocument\n\nlogger\
+    \ = logging.getLogger()\nDEFAULT_K = 4  # Number of Documents to return.\n\n#\
+    \ Omitted irrelevant parts\n\nclass Chroma(VectorStore):\n    \"\"\"Wrapper around\
+    \ ChromaDB embeddings platform.\n\n    To use, you should have the ``chromadb``\
+    \ python package installed.\n\n    Example:\n        .. code-block:: python\n\n\
+    \                from langchain.vectorstores import Chroma\n                from\
+    \ langchain.embeddings.openai import OpenAIEmbeddings\n\n                embeddings\
+    \ = OpenAIEmbeddings()\n                vectorstore = Chroma(\"langchain_store\"\
+    , embeddings)\n    \"\"\"\n\n    _LANGCHAIN_DEFAULT_COLLECTION_NAME = \"langchain\"\
+    \n\n    def __init__(\n        self,\n        collection_name: str = _LANGCHAIN_DEFAULT_COLLECTION_NAME,\n\
+    \        embedding_function: Optional[Embeddings] = None,\n        persist_directory:\
+    \ Optional[str] = None,\n        client_settings: Optional[chromadb.config.Settings]\
+    \ = None,\n        collection_metadata: Optional[Dict] = None,\n        client:\
+    \ Optional[chromadb.Client] = None,\n        relevance_score_fn: Optional[Callable[[float],\
+    \ float]] = None,\n    ) -> None:\n        \"\"\"Initialize with Chroma client.\"\
+    \"\"\n        # Omitted irrelevant parts\n\n    def add_texts(\n        self,\n\
+    \        texts: Iterable[str],\n        metadatas: Optional[List[dict]] = None,\n\
+    \        ids: Optional[List[str]] = None,\n        **kwargs: Any,\n    ) -> List[str]:\n\
+    \        \"\"\"Run more texts through the embeddings and add to the vectorstore.\n\
+    \n        Args:\n            texts (Iterable[str]): Texts to add to the vectorstore.\n\
+    \            metadatas (Optional[List[dict]], optional): Optional list of metadatas.\n\
+    \            ids (Optional[List[str]], optional): Optional list of IDs.\n\n  \
+    \      Returns:\n            List[str]: List of IDs of the added texts.\n    \
+    \    \"\"\"\n        # Omitted irrelevant parts\n\n    def similarity_search(\n\
+    \        self,\n        query: str,\n        k: int = DEFAULT_K,\n        filter:\
+    \ Optional[Dict[str, str]] = None,\n        **kwargs: Any,\n    ) -> List[Document]:\n\
+    \        \"\"\"Run similarity search with Chroma.\n\n        Args:\n         \
+    \   query (str): Query text to search for.\n            k (int): Number of results\
+    \ to return. Defaults to 4.\n            filter (Optional[Dict[str, str]]): Filter\
+    \ by metadata. Defaults to None.\n\n        Returns:\n            List[Document]:\
+    \ List of documents most similar to the query text.\n        \"\"\"\n        #\
+    \ Omitted irrelevant parts\n\n    def similarity_search_by_vector(\n        self,\n\
+    \        embedding: List[float],\n        k: int = DEFAULT_K,\n        filter:\
+    \ Optional[Dict[str, str]] = None,\n        **kwargs: Any,\n    ) -> List[Document]:\n\
+    \        \"\"\"Return docs most similar to embedding vector.\n        Args:\n\
+    \            embedding (List[float]): Embedding to look up documents similar to.\n\
+    \            k (int): Number of Documents to return. Defaults to 4.\n        \
+    \    filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.\n\
+    \        Returns:\n            List of Documents most similar to the query vector.\n\
+    \        \"\"\"\n        # Omitted irrelevant parts\n\n    def similarity_search_by_vector_with_relevance_scores(\n\
+    \        self,\n        embedding: List[float],\n        k: int = DEFAULT_K,\n\
+    \        filter: Optional[Dict[str, str]] = None,\n        **kwargs: Any,\n  \
+    \  ) -> List[Tuple[Document, float]]:\n        \"\"\"\n        Return docs most\
+    \ similar to embedding vector and similarity score.\n\n        Args:\n       \
+    \     embedding (List[float]): Embedding to look up documents similar to.\n  \
+    \          k (int): Number of Documents to return. Defaults to 4.\n          \
+    \  filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.\n\n\
+    \        Returns:\n            List[Tuple[Document, float]]: List of documents\
+    \ most similar to\n            the query text and cosine distance in float for\
+    \ each.\n            Lower score represents more similarity.\n        \"\"\"\n\
+    \        # Omitted irrelevant parts\n\n    def similarity_search_with_score(\n\
+    \        self,\n        query: str,\n        k: int = DEFAULT_K,\n        filter:\
+    \ Optional[Dict[str, str]] = None,\n        **kwargs: Any,\n    ) -> List[Tuple[Document,\
+    \ float]]:\n        \"\"\"Run similarity search with Chroma with distance.\n\n\
+    \        Args:\n            query (str): Query text to search for.\n         \
+    \   k (int): Number of results to return. Defaults to 4.\n            filter (Optional[Dict[str,\
+    \ str]]): Filter by metadata. Defaults to None.\n\n        Returns:\n        \
+    \    List[Tuple[Document, float]]: List of documents most similar to\n       \
+    \     the query text and cosine distance in float for each.\n            Lower\
+    \ score represents more similarity.\n        \"\"\"\n        # Omitted irrelevant\
+    \ parts\n\n    def max_marginal_relevance_search_by_vector(\n        self,\n \
+    \       embedding: List[float],\n        k: int = DEFAULT_K,\n        fetch_k:\
+    \ int = 20,\n        lambda_mult: float = 0.5,\n        filter: Optional[Dict[str,\
+    \ str]] = None,\n        **kwargs: Any,\n    ) -> List[Document]:\n        \"\"\
+    \"Return docs selected using the maximal marginal relevance.\n        Maximal\
+    \ marginal relevance optimizes for similarity to query AND diversity\n       \
+    \ among selected documents.\n\n        Args:\n            embedding: Embedding\
+    \ to look up documents similar to.\n            k: Number of Documents to return.\
+    \ Defaults to 4.\n            fetch_k: Number of Documents to fetch to pass to\
+    \ MMR algorithm.\n            lambda_mult: Number between 0 and 1 that determines\
+    \ the degree\n                        of diversity among the results with 0 corresponding\n\
+    \                        to maximum diversity and 1 to minimum diversity.\n  \
+    \                      Defaults to 0.5.\n            filter (Optional[Dict[str,\
+    \ str]]): Filter by metadata. Defaults to None.\n\n        Returns:\n        \
+    \    List of Documents selected by maximal marginal relevance.\n        \"\"\"\
+    \n        # Omitted irrelevant parts\n\n    def max_marginal_relevance_search(\n\
+    \        self,\n        query: str,\n        k: int = DEFAULT_K,\n        fetch_k:\
+    \ int = 20,\n        lambda_mult: float = 0.5,\n        filter: Optional[Dict[str,\
+    \ str]] = None,\n        **kwargs: Any,\n    ) -> List[Document]:\n        \"\"\
+    \"Return docs selected using the maximal marginal relevance.\n        Maximal\
+    \ marginal relevance optimizes for similarity to query AND diversity\n       \
+    \ among selected documents.\n\n        Args:\n            query: Text to look\
+    \ up documents similar to.\n            k: Number of Documents to return. Defaults\
+    \ to 4.\n            fetch_k: Number of Documents to fetch to pass to MMR algorithm.\n\
+    \            lambda_mult: Number between 0 and 1 that determines the degree\n\
+    \                        of diversity among the results with 0 corresponding\n\
+    \                        to maximum diversity and 1 to minimum diversity.\n  \
+    \                      Defaults to 0.5.\n            filter (Optional[Dict[str,\
+    \ str]]): Filter by metadata. Defaults to None.\n\n        Returns:\n        \
+    \    List of Documents selected by maximal marginal relevance.\n        \"\"\"\
+    \n        # Omitted irrelevant parts\n\n    def delete_collection(self) -> None:\n\
+    \        \"\"\"Delete the collection.\"\"\"\n        # Omitted irrelevant parts\n\
+    \n    def get(\n        self,\n        ids: Optional[OneOrMany[ID]] = None,\n\
+    \        where: Optional[Where] = None,\n        limit: Optional[int] = None,\n\
+    \        offset: Optional[int] = None,\n        where_document: Optional[WhereDocument]\
+    \ = None,\n        include: Optional[List[str]] = None,\n    ) -> Dict[str, Any]:\n\
+    \        \"\"\"Gets the collection.\n\n        Args:\n            ids: The ids\
+    \ of the embeddings to get. Optional.\n            where: A Where type dict used\
+    \ to filter results by.\n                   E.g. `{\"color\" : \"red\", \"price\"\
+    : 4.20}`. Optional.\n            limit: The number of documents to return. Optional.\n\
+    \            offset: The offset to start returning results from.\n           \
+    \         Useful for paging results with limit. Optional.\n            where_document:\
+    \ A WhereDocument type dict used to filter by the documents.\n               \
+    \             E.g. `{$contains: {\"text\": \"hello\"}}`. Optional.\n         \
+    \   include: A list of what to include in the results.\n                     Can\
+    \ contain `\"embeddings\"`, `\"metadatas\"`, `\"documents\"`.\n              \
+    \       Ids are always included.\n                     Defaults to `[\"metadatas\"\
+    , \"documents\"]`. Optional.\n        \"\"\"\n        # Omitted irrelevant parts\n\
+    \n    def persist(self) -> None:\n        \"\"\"Persist the collection.\n\n  \
+    \      This can be used to explicitly persist the data to disk.\n        It will\
+    \ also be called automatically when the object is destroyed.\n        \"\"\"\n\
+    \        # Omitted irrelevant parts\n\n    def update_document(self, document_id:\
+    \ str, document: Document) -> None:\n        \"\"\"Update a document in the collection.\n\
+    \n        Args:\n            document_id (str): ID of the document to update.\n\
+    \            document (Document): Document to update.\n        \"\"\"\n      \
+    \  # Omitted irrelevant parts\n\n    @classmethod\n    def from_texts(\n     \
+    \   cls: Type[Chroma],\n        texts: List[str],\n        embedding: Optional[Embeddings]\
+    \ = None,\n        metadatas: Optional[List[dict]] = None,\n        ids: Optional[List[str]]\
+    \ = None,\n        collection_name: str = _LANGCHAIN_DEFAULT_COLLECTION_NAME,\n\
+    \        persist_directory: Optional[str] = None,\n        client_settings: Optional[chromadb.config.Settings]\
+    \ = None,\n        client: Optional[chromadb.Client] = None,\n        collection_metadata:\
+    \ Optional[Dict] = None,\n        **kwargs: Any,\n    ) -> Chroma:\n        \"\
+    \"\"Create a Chroma vectorstore from a raw documents.\n\n        If a persist_directory\
+    \ is specified, the collection will be persisted there.\n        Otherwise, the\
+    \ data will be ephemeral in-memory.\n\n        Args:\n            texts (List[str]):\
+    \ List of texts to add to the collection.\n            collection_name (str):\
+    \ Name of the collection to create.\n            persist_directory (Optional[str]):\
+    \ Directory to persist the collection.\n            embedding (Optional[Embeddings]):\
+    \ Embedding function. Defaults to None.\n            metadatas (Optional[List[dict]]):\
+    \ List of metadatas. Defaults to None.\n            ids (Optional[List[str]]):\
+    \ List of document IDs. Defaults to None.\n            client_settings (Optional[chromadb.config.Settings]):\
+    \ Chroma client settings\n            collection_metadata (Optional[Dict]): Collection\
+    \ configurations.\n                                                  Defaults\
+    \ to None.\n\n        Returns:\n            Chroma: Chroma vectorstore.\n    \
+    \    \"\"\"\n        # Omitted irrelevant parts\n\n    @classmethod\n    def from_documents(\n\
+    \        cls: Type[Chroma],\n        documents: List[Document],\n        embedding:\
+    \ Optional[Embeddings] = None,\n        ids: Optional[List[str]] = None,\n   \
+    \     collection_name: str = _LANGCHAIN_DEFAULT_COLLECTION_NAME,\n        persist_directory:\
+    \ Optional[str] = None,\n        client_settings: Optional[chromadb.config.Settings]\
+    \ = None,\n        client: Optional[chromadb.Client] = None,  # Add this line\n\
+    \        collection_metadata: Optional[Dict] = None,\n        **kwargs: Any,\n\
+    \    ) -> Chroma:\n        \"\"\"Create a Chroma vectorstore from a list of documents.\n\
+    \n        If a persist_directory is specified, the collection will be persisted\
+    \ there.\n        Otherwise, the data will be ephemeral in-memory.\n\n       \
+    \ Args:\n            collection_name (str): Name of the collection to create.\n\
+    \            persist_directory (Optional[str]): Directory to persist the collection.\n\
+    \            ids (Optional[List[str]]): List of document IDs. Defaults to None.\n\
+    \            documents (List[Document]): List of documents to add to the vectorstore.\n\
+    \            embedding (Optional[Embeddings]): Embedding function. Defaults to\
+    \ None.\n            client_settings (Optional[chromadb.config.Settings]): Chroma\
+    \ client settings\n            collection_metadata (Optional[Dict]): Collection\
+    \ configurations.\n                                                  Defaults\
+    \ to None.\n\n        Returns:\n            Chroma: Chroma vectorstore.\n    \
+    \    \"\"\"\n        # Omitted irrelevant parts\n\n    def delete(self, ids: Optional[List[str]]\
+    \ = None, **kwargs: Any) -> None:\n        \"\"\"Delete by vector IDs.\n\n   \
+    \     Args:\n            ids: List of ids to delete.\n        \"\"\"\n       \
+    \ # Omitted irrelevant parts\n```"
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/chains/chat_vector_db/prompts.py # f...'
+    uuid: 120c845c-cab5-4eaa-923c-bf81b8f9ea5f
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: f7d3d73b-9a7c-47e6-9b84-140055db4a5e
+sender:
+    bot_alias: extract_snippets
+    uuid: 905e84fd-e983-4bed-a926-48ff9c576301
+uuid: fb975b00-c1f7-4ef9-b816-8632eef0082b
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+receiver:
+    bot_alias: chat_history_filter
+    uuid: bb26ef49-45b2-43a6-a37e-72b6adc95120
+sender:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+uuid: 383ced9f-bca4-46cf-a533-39c9941a6e61
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+parent_context:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+previous_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 383ced9f-bca4-46cf-a533-39c9941a6e61
+receiver:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 383ced9f-bca4-46cf-a533-39c9941a6e61
+sender:
+    bot_alias: chat_history_filter
+    uuid: bb26ef49-45b2-43a6-a37e-72b6adc95120
+uuid: 0254b16f-7aca-4f21-8ffb-9d4d3501d3d0
+
+---
+
+_type: OriginalMessage
+content: 'The `Chroma` class in the `langchain` repository is a wrapper around the
+    ChromaDB embeddings platform. It provides methods to add texts to the vector store,
+    perform similarity searches, and persist the collection to disk. However, it doesn''t
+    seem to provide a direct method to load a persisted collection.
+
+
+    The `from_chain_type()` method you mentioned is not part of the `Chroma` class,
+    and it seems like it''s not designed to accept a `vectorstore` as an argument.
+
+
+    To load the persisted data, you might need to initialize a new `Chroma` instance
+    with the same `persist_directory` you used when you saved the data. This should
+    load the persisted data into the new instance. Here''s an example:
+
+
+    ```python
+
+    vectordb = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+
+    ```
+
+
+    This should create a new `Chroma` instance and load the data from the specified
+    `persist_directory`.
+
+
+    However, without more context about the `RetrievalQA` class and its `from_chain_type()`
+    method, it''s hard to provide a more specific solution. If `RetrievalQA` is a
+    class that uses a `Chroma` instance, you might need to modify it to accept a `Chroma`
+    instance as an argument, or modify it to load the persisted data itself.
+
+
+    If you''re still having trouble, could you provide more information about the
+    `RetrievalQA` class and its `from_chain_type()` method?'
+parent_context:
+    preview: teremterem's channel
+    uuid: f96cea80-420a-4db5-82bf-f7dd61273e58
+previous_message:
+    preview: '``` libs/langchain/langchain/vectorstores/chroma.py libs/langchain/...'
+    uuid: 51377981-2353-4048-815c-7ef380e1adac
+receiver:
+    human_name: teremterem
+    uuid: 82a5e668-573b-47db-b8a1-13a7e347db64
+requesting_message:
+    preview: '# LangChain Chroma - load data from Vector Database I have written ...'
+    uuid: 87ae641e-c4cc-433a-8599-72471346014d
+sender:
+    bot_alias: direct_answer
+    uuid: 25583c39-63ae-43bd-8763-a37c01141081
+uuid: fe0a2c32-c534-413c-bb83-a14b9114cd42

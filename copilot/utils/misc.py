@@ -6,16 +6,20 @@ from langchain.chat_models.openai import _convert_message_to_dict
 from langchain.schema import BaseMessage
 
 FAST_GPT_MODEL = "gpt-3.5-turbo-0613"
-# TODO revert back to more powerful models
-FAST_LONG_GPT_MODEL = FAST_GPT_MODEL
-SLOW_GPT_MODEL = FAST_GPT_MODEL
-# FAST_LONG_GPT_MODEL = "gpt-3.5-turbo-16k-0613"
-# SLOW_GPT_MODEL = "gpt-4-0613"
+# FAST_LONG_GPT_MODEL = FAST_GPT_MODEL
+# SLOW_GPT_MODEL = FAST_GPT_MODEL
+FAST_LONG_GPT_MODEL = "gpt-3.5-turbo-16k-0613"
+SLOW_GPT_MODEL = "gpt-4-0613"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
+NUM_OF_COSINE_SIM_FILES = 2
+TOTAL_NUM_OF_RELEVANT_FILES = 5
 CHAT_HISTORY_MAX_LENGTH = 20
 
-bot_merger = YamlLogBotMerger(Path(__file__).parents[2] / "merged_log.yaml", serialization_enabled=False)
+bot_merger = YamlLogBotMerger(
+    Path(__file__).parents[2] / "tests/data/langchain_stackoverflow_2.yaml",
+    # serialization_enabled=False,
+)
 
 
 def get_openai_role_name(message: MergedMessage, this_bot: MergedParticipant) -> str:
