@@ -21,6 +21,7 @@ from copilot.utils.misc import (
     bot_merger,
     NUM_OF_COSINE_SIM_FILES,
     TOTAL_NUM_OF_RELEVANT_FILES,
+    TOTAL_NUM_OF_COSINE_SIM_FILES,
 )
 
 RELEVANT_FILES_PROMPT_PREFIX = ChatPromptTemplate.from_messages(
@@ -67,7 +68,7 @@ async def relevant_files(context: SingleTurnContext) -> None:
         input=[standalone_request.content],
     )
     embedding = result["data"][0]["embedding"]
-    _, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), 5)
+    _, indices = EXPLANATIONS_FAISS.search(np.array([embedding], dtype=np.float32), TOTAL_NUM_OF_COSINE_SIM_FILES)
 
     fetched_files = [INDEXED_EXPL_FILES[idx] for idx in indices[0]]
     file_explanations = [
