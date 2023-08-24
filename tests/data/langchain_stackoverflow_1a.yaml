@@ -55,6 +55,7 @@ uuid: def9856c-4f5c-44ba-876e-3bb725d925e4
 
 ---
 
+# https://stackoverflow.com/questions/76232375/langchain-chroma-load-data-from-vector-database
 _type: OriginalMessage
 content: 'I have written LangChain code using Chroma DB to vector store the data from
     a website url. It currently works to get the data from the URL, store it into

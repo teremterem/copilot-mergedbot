@@ -55,6 +55,7 @@ uuid: f96cea80-420a-4db5-82bf-f7dd61273e58
 
 ---
 
+# https://stackoverflow.com/questions/76232375/langchain-chroma-load-data-from-vector-database
 _type: OriginalMessage
 content: '# LangChain Chroma - load data from Vector Database
 

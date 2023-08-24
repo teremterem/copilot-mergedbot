@@ -1,0 +1,598 @@
+_type: MergedBot
+alias: chat_history_filter
+uuid: b418745c-1db5-4319-8ed4-1bf2e0f37982
+
+---
+
+_type: MergedBot
+alias: request_condenser
+uuid: 68bf2a6f-65db-46bb-aec4-333182ac8c32
+
+---
+
+_type: MergedBot
+alias: extract_snippets
+uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+
+---
+
+_type: MergedBot
+alias: relevant_files
+uuid: 6d6955e8-eed9-4cba-a23c-3722d783187c
+
+---
+
+_type: MergedBot
+alias: direct_answer
+uuid: 555baed3-abce-4290-b384-71d642c434ca
+
+---
+
+_type: MergedBot
+alias: replay_bot
+uuid: 0dbd9f0a-ee7b-49e1-ad1c-624b78e48d90
+
+---
+
+_type: MergedUser
+name: teremterem
+uuid: 880cb5f0-297d-4b1f-a64e-144e6d73cddc
+
+---
+
+_type: OriginalMessage
+content: teremterem's channel
+extra_fields:
+    channel_id: 1104419843991674900
+    channel_type: discord
+receiver:
+    human_name: teremterem
+    uuid: 880cb5f0-297d-4b1f-a64e-144e6d73cddc
+sender:
+    human_name: teremterem
+    uuid: 880cb5f0-297d-4b1f-a64e-144e6d73cddc
+uuid: 881a8917-8e1e-405e-892c-a7e6e8dac548
+
+---
+
+# https://stackoverflow.com/questions/76920387/conversationchain-with-context-in-langchain
+_type: OriginalMessage
+content: "# ConversationChain with context in langchain\n\nI want to create a chatbot\
+    \ based on langchain. In the first message of the conversation, I want to pass\
+    \ the initial context.\n\nWhat is the way to do it? I'm struggling with this,\
+    \ because from what I see, I can use prompt template. From their examples:\n```\n\
+    template = \"\"\"The following is a friendly conversation between a human and\
+    \ an AI. The AI is talkative and provides lots of specific details from its context.\
+    \ If the AI does not know the answer to a question, it truthfully says it does\
+    \ not know.\n\nCurrent conversation:\n{history}\nHuman: {input}\nAI Assistant:\"\
+    \"\"\nPROMPT = PromptTemplate(input_variables=[\"history\", \"input\"], template=template)\n\
+    conversation = ConversationChain(\n    prompt=PROMPT,\n    llm=llm,\n    verbose=True,\n\
+    \    memory=ConversationBufferMemory(ai_prefix=\"AI Assistant\"),\n)\n```\nBut\
+    \ the issue is that my usual approach to working with the models is through the\
+    \ use of SystemMessage, which provides context and guidance to the bot. I am unsure\
+    \ if this template is the recommended way for langchain to handle system messages.\
+    \ If not, could you please clarify the correct method?"
+parent_context:
+    preview: teremterem's channel
+    uuid: 881a8917-8e1e-405e-892c-a7e6e8dac548
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+sender:
+    human_name: teremterem
+    uuid: 880cb5f0-297d-4b1f-a64e-144e6d73cddc
+uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+receiver:
+    bot_alias: relevant_files
+    uuid: 6d6955e8-eed9-4cba-a23c-3722d783187c
+sender:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+uuid: 3ac7b064-e6f5-4fcb-bf9b-ed700e22820a
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 3ac7b064-e6f5-4fcb-bf9b-ed700e22820a
+receiver:
+    bot_alias: request_condenser
+    uuid: 68bf2a6f-65db-46bb-aec4-333182ac8c32
+sender:
+    bot_alias: relevant_files
+    uuid: 6d6955e8-eed9-4cba-a23c-3722d783187c
+uuid: 2efa98d2-7c46-4b11-805f-254bf5577b03
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 3ac7b064-e6f5-4fcb-bf9b-ed700e22820a
+previous_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 2efa98d2-7c46-4b11-805f-254bf5577b03
+receiver:
+    bot_alias: relevant_files
+    uuid: 6d6955e8-eed9-4cba-a23c-3722d783187c
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 2efa98d2-7c46-4b11-805f-254bf5577b03
+sender:
+    bot_alias: request_condenser
+    uuid: 68bf2a6f-65db-46bb-aec4-333182ac8c32
+uuid: 51082a04-304d-4a32-b3cc-2f42369e25b5
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/chains/conversation/prompt.py
+
+
+    This file imports various prompt templates from the `langchain.memory.prompt`
+    and `langchain.prompts.prompt` modules. It defines a default conversation template
+    and a prompt template for generating conversations between a human and an AI.
+    The default template includes placeholders for the conversation history and the
+    input from the human. The file also exports these prompt templates for backwards
+    compatibility.'
+extra_fields:
+    file: libs/langchain/langchain/chains/conversation/prompt.py
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 3ac7b064-e6f5-4fcb-bf9b-ed700e22820a
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 3ac7b064-e6f5-4fcb-bf9b-ed700e22820a
+sender:
+    bot_alias: relevant_files
+    uuid: 6d6955e8-eed9-4cba-a23c-3722d783187c
+still_thinking: true
+uuid: 4577008f-2cd8-4165-aaa5-5611f055588e
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/agents/conversational_chat/prompt.py
+
+
+    This file contains the text prompts and instructions for the conversational chat
+    agent in the `langchain` project. It includes a prefix that introduces the Assistant,
+    explaining its capabilities and purpose. There is also a section that provides
+    instructions on how to format the responses when interacting with the Assistant.
+
+
+    The file also includes a suffix that lists the available tools that the human
+    can use to look up information. It provides instructions on how to use these tools
+    and how to format the responses when using them.
+
+
+    Additionally, there is a template for the tool response, which includes a placeholder
+    for the observation obtained from the tool. Finally, the file includes a section
+    for the user''s input, which is used to display the user''s input when interacting
+    with the Assistant.'
+extra_fields:
+    file: libs/langchain/langchain/agents/conversational_chat/prompt.py
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/chains/conversation/prompt.py This f...'
+    uuid: 4577008f-2cd8-4165-aaa5-5611f055588e
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 3ac7b064-e6f5-4fcb-bf9b-ed700e22820a
+sender:
+    bot_alias: relevant_files
+    uuid: 6d6955e8-eed9-4cba-a23c-3722d783187c
+still_thinking: true
+uuid: 3b5b04ac-7752-471b-8726-2cbd75ebbf42
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/chains/conversation/__init__.py
+
+
+    This file contains the implementation of a chain that is capable of carrying on
+    a conversation based on a given prompt and history. It is designed to facilitate
+    the generation of responses in a conversational manner.'
+extra_fields:
+    file: libs/langchain/langchain/chains/conversation/__init__.py
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/agents/conversational_chat/prompt.py...'
+    uuid: 3b5b04ac-7752-471b-8726-2cbd75ebbf42
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 3ac7b064-e6f5-4fcb-bf9b-ed700e22820a
+sender:
+    bot_alias: relevant_files
+    uuid: 6d6955e8-eed9-4cba-a23c-3722d783187c
+still_thinking: true
+uuid: 7c322037-076b-4ba9-8973-cde35e7ec6c3
+
+---
+
+_type: OriginalMessage
+content: '```
+
+    libs/langchain/langchain/chains/conversation/prompt.py
+
+    libs/langchain/langchain/agents/conversational_chat/prompt.py
+
+    libs/langchain/langchain/chains/conversation/__init__.py
+
+    ```'
+hidden_from_history: true
+parent_context:
+    preview: teremterem's channel
+    uuid: 881a8917-8e1e-405e-892c-a7e6e8dac548
+previous_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+receiver:
+    human_name: teremterem
+    uuid: 880cb5f0-297d-4b1f-a64e-144e6d73cddc
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+sender:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+still_thinking: true
+uuid: 4d967800-6517-4f43-a6c5-da27a0e22524
+
+---
+
+_type: ForwardedMessage
+extra_fields:
+    file: libs/langchain/langchain/chains/conversation/prompt.py
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+receiver:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+sender:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+uuid: c21fa88b-379d-444f-a0cb-eab50b75410c
+
+---
+
+_type: ForwardedMessage
+extra_fields:
+    file: libs/langchain/langchain/agents/conversational_chat/prompt.py
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: c21fa88b-379d-444f-a0cb-eab50b75410c
+receiver:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+sender:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+uuid: 7e0b19c5-2c72-47e3-9520-428acbac5d67
+
+---
+
+_type: ForwardedMessage
+extra_fields:
+    file: libs/langchain/langchain/chains/conversation/__init__.py
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 7e0b19c5-2c72-47e3-9520-428acbac5d67
+receiver:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+sender:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+uuid: dcdb863c-a84a-4c3a-8684-3b3863280f92
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: c21fa88b-379d-444f-a0cb-eab50b75410c
+receiver:
+    bot_alias: request_condenser
+    uuid: 68bf2a6f-65db-46bb-aec4-333182ac8c32
+sender:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+uuid: e2a2c3cd-c0ba-4491-9866-ff7a3040a148
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 7e0b19c5-2c72-47e3-9520-428acbac5d67
+receiver:
+    bot_alias: request_condenser
+    uuid: 68bf2a6f-65db-46bb-aec4-333182ac8c32
+sender:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+uuid: 9d48f066-5892-49ed-bc37-02b771ee385b
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: dcdb863c-a84a-4c3a-8684-3b3863280f92
+receiver:
+    bot_alias: request_condenser
+    uuid: 68bf2a6f-65db-46bb-aec4-333182ac8c32
+sender:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+uuid: 78d64121-da2b-40b8-aa50-084bbb7755ef
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/chains/conversation/__init__.py
+
+
+    NONE'
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: dcdb863c-a84a-4c3a-8684-3b3863280f92
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: dcdb863c-a84a-4c3a-8684-3b3863280f92
+sender:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+uuid: dfb36844-c870-445d-bb46-2c1f8e7f09b3
+
+---
+
+_type: OriginalMessage
+content: 'FILE: libs/langchain/langchain/chains/conversation/prompt.py
+
+
+    The relevant part of the file `libs/langchain/langchain/chains/conversation/prompt.py`
+    for your request is the following:
+
+
+    ```python
+
+    DEFAULT_TEMPLATE = """The following is a friendly conversation between a human
+    and an AI. The AI is talkative and provides lots of specific details from its
+    context. If the AI does not know the answer to a question, it truthfully says
+    it does not know.
+
+
+    Current conversation:
+
+    {history}
+
+    Human: {input}
+
+    AI:"""
+
+    PROMPT = PromptTemplate(input_variables=["history", "input"], template=DEFAULT_TEMPLATE)
+
+    ```
+
+
+    This code shows an example of how to create a prompt template for a conversation
+    in langchain. The `DEFAULT_TEMPLATE` variable defines the structure of the conversation,
+    including placeholders for the history and input. The `PROMPT` variable then uses
+    the `PromptTemplate` class to create a prompt object with the specified input
+    variables and template.
+
+
+    However, it seems that this code does not directly address your concern about
+    using system messages in langchain. It is unclear from this file whether the prompt
+    template is the recommended way to handle system messages.'
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/chains/conversation/__init__.py NONE'
+    uuid: dfb36844-c870-445d-bb46-2c1f8e7f09b3
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: c21fa88b-379d-444f-a0cb-eab50b75410c
+sender:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+uuid: e84eedca-f63a-46ec-b3a6-a27f22f0648a
+
+---
+
+_type: OriginalMessage
+content: "FILE: libs/langchain/langchain/agents/conversational_chat/prompt.py\n\n\
+    The relevant parts of the file `libs/langchain/langchain/agents/conversational_chat/prompt.py`\
+    \ for your request are as follows:\n\nTo pass the initial context in the first\
+    \ message of the conversation, you can use a prompt template. Here is an example\
+    \ from the file:\n\n```python\ntemplate = \"\"\"The following is a friendly conversation\
+    \ between a human and an AI. The AI is talkative and provides lots of specific\
+    \ details from its context. If the AI does not know the answer to a question,\
+    \ it truthfully says it does not know.\n\nCurrent conversation:\n{history}\nHuman:\
+    \ {input}\nAI Assistant:\"\"\"\nPROMPT = PromptTemplate(input_variables=[\"history\"\
+    , \"input\"], template=template)\nconversation = ConversationChain(\n    prompt=PROMPT,\n\
+    \    llm=llm,\n    verbose=True,\n    memory=ConversationBufferMemory(ai_prefix=\"\
+    AI Assistant\"),\n)\n```\n\nThis template allows you to include the initial context\
+    \ in the conversation by using the `history` and `input` variables. The `history`\
+    \ variable represents the previous messages in the conversation, and the `input`\
+    \ variable represents the current user input.\n\nIt is important to note that\
+    \ this template is specific to the langchain library and may not be the recommended\
+    \ way to handle system messages. If you usually work with the models through the\
+    \ use of SystemMessage, you may need to consult the langchain documentation or\
+    \ seek further clarification on the correct method for handling system messages.\n\
+    \nPlease note that this is just a partial response and there may be more information\
+    \ in the file that could be relevant to your request."
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: 'FILE: libs/langchain/langchain/chains/conversation/prompt.py The re...'
+    uuid: e84eedca-f63a-46ec-b3a6-a27f22f0648a
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 7e0b19c5-2c72-47e3-9520-428acbac5d67
+sender:
+    bot_alias: extract_snippets
+    uuid: d547447a-597e-4d47-8ef9-ea3b99c23489
+uuid: 3a53b90d-abc8-43bc-83e4-6b28b278be52
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+receiver:
+    bot_alias: chat_history_filter
+    uuid: b418745c-1db5-4319-8ed4-1bf2e0f37982
+sender:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+uuid: a43f720e-d782-4be8-b80e-a654e1c6a00b
+
+---
+
+_type: ForwardedMessage
+original_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+parent_context:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+previous_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: a43f720e-d782-4be8-b80e-a654e1c6a00b
+receiver:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: a43f720e-d782-4be8-b80e-a654e1c6a00b
+sender:
+    bot_alias: chat_history_filter
+    uuid: b418745c-1db5-4319-8ed4-1bf2e0f37982
+uuid: b04753ec-6cb1-42f2-814e-d0554e2e713a
+
+---
+
+_type: OriginalMessage
+content: "In the `langchain` library, the `ConversationChain` class is used to manage\
+    \ the conversation between the user and the AI. The `ConversationChain` takes\
+    \ a `PromptTemplate` as an argument, which is used to format the conversation\
+    \ history and the user's input into a prompt for the AI.\n\nThe `PromptTemplate`\
+    \ is defined with a string template and a list of input variables. The string\
+    \ template contains placeholders for the input variables. In your example, the\
+    \ placeholders are `{history}` and `{input}`. The `history` placeholder is replaced\
+    \ with the conversation history, and the `input` placeholder is replaced with\
+    \ the user's input.\n\nIf you want to pass the initial context in the first message\
+    \ of the conversation, you can do so by including it in the `history` when you\
+    \ create the `ConversationChain`. Here is an example:\n\n```python\ninitial_context\
+    \ = \"This is the initial context.\"\nconversation = ConversationChain(\n    prompt=PROMPT,\n\
+    \    llm=llm,\n    verbose=True,\n    memory=ConversationBufferMemory(ai_prefix=\"\
+    AI Assistant\", initial_context=initial_context),\n)\n```\n\nIn this example,\
+    \ the `initial_context` is passed to the `ConversationBufferMemory` when it is\
+    \ created. The `ConversationBufferMemory` is then passed to the `ConversationChain`.\
+    \ The `initial_context` will be included in the `history` when the `PromptTemplate`\
+    \ formats the prompt.\n\nRegarding the use of `SystemMessage`, it seems that `langchain`\
+    \ does not directly support this feature. However, you can still use `SystemMessage`\
+    \ to provide context and guidance to the bot by including the system message in\
+    \ the `initial_context`. Here is an example:\n\n```python\nsystem_message = \"\
+    This is a system message.\"\ninitial_context = f\"{system_message}\\nThis is the\
+    \ initial context.\"\nconversation = ConversationChain(\n    prompt=PROMPT,\n\
+    \    llm=llm,\n    verbose=True,\n    memory=ConversationBufferMemory(ai_prefix=\"\
+    AI Assistant\", initial_context=initial_context),\n)\n```\n\nIn this example,\
+    \ the `system_message` is included in the `initial_context`. The `system_message`\
+    \ will be included in the `history` when the `PromptTemplate` formats the prompt."
+parent_context:
+    preview: teremterem's channel
+    uuid: 881a8917-8e1e-405e-892c-a7e6e8dac548
+previous_message:
+    preview: '``` libs/langchain/langchain/chains/conversation/prompt.py libs/lan...'
+    uuid: 4d967800-6517-4f43-a6c5-da27a0e22524
+receiver:
+    human_name: teremterem
+    uuid: 880cb5f0-297d-4b1f-a64e-144e6d73cddc
+requesting_message:
+    preview: '# ConversationChain with context in langchain I want to create a ch...'
+    uuid: 6bcf091f-9656-4dfe-a8c8-a6109a37eb9a
+sender:
+    bot_alias: direct_answer
+    uuid: 555baed3-abce-4290-b384-71d642c434ca
+uuid: 2991601b-8e84-4e29-be2b-36c96572e461
